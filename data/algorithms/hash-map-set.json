@@ -1,0 +1,111 @@
+{
+  "slug": "hash-map-set",
+  "title": "Hash Map & Set",
+  "difficulty": "easy",
+  "tags": ["hash-map", "set", "lookup", "deduplication", "normalization"],
+  "summary": "Trade space for O(1) average-case lookup, insertion, and deduplication by mapping keys to indexed buckets.",
+  "overview": "A hash map (object/Map in JS) stores key-value pairs with O(1) average lookup. A set stores unique values with O(1) membership tests. Both structures underlie the most common frontend optimization pattern: cache the result of a slow operation keyed by its input.",
+  "coreConcept": "Hash functions convert arbitrary keys into array indices. Collisions are resolved via chaining or open addressing. In JavaScript, plain objects, Map, and Set all give you hash-table semantics. The core trade-off: use extra memory to eliminate repeated work. If you find yourself scanning an array repeatedly, a map is almost always the fix.",
+  "problemPatterns": [
+    "Two Sum / complement lookup",
+    "Frequency counting (character counts, word counts)",
+    "Deduplication while preserving order",
+    "Grouping items by a key (group-by)",
+    "Normalizing API responses by ID for O(1) access",
+    "Detecting duplicates or first non-repeating element"
+  ],
+  "signals": [
+    "You're doing repeated arr.find() or arr.includes() inside a loop",
+    "Question asks 'have you seen this before?'",
+    "You need to count occurrences",
+    "You need to group items by a property",
+    "Lookup by ID from a flat array is a bottleneck"
+  ],
+  "frontendScenarios": [
+    {
+      "title": "Normalizing API Response Data",
+      "description": "An API returns an array of user objects. Components need to look up users by ID frequently. Converting the array to a Map<id, User> makes every lookup O(1) instead of O(n).",
+      "example": "// Slow: users.find(u => u.id === id)  — O(n) every call\n// Fast:\nconst userMap = new Map(users.map(u => [u.id, u]));\nconst user = userMap.get(id); // O(1)"
+    },
+    {
+      "title": "Deduplicating Tag Lists",
+      "description": "A content editor lets users add tags. Tags must be unique and order-of-first-appearance matters. A Set handles both: insertion is O(1) and iteration preserves insertion order.",
+      "example": "const tags = new Set<string>();\nfunction addTag(tag: string) {\n  tags.add(tag.toLowerCase().trim());\n}\n// Convert back: [...tags]"
+    },
+    {
+      "title": "Redux-style Entities Slice",
+      "description": "State management libraries normalize collections into { ids: string[], entities: Record<id, Item> }. This pattern lets the UI render lists (ids) while components read single items (entities[id]) in O(1).",
+      "example": "interface EntityState<T> {\n  ids: string[];\n  entities: Record<string, T>;\n}\nfunction normalize<T extends {id:string}>(items: T[]): EntityState<T> {\n  return {\n    ids: items.map(i => i.id),\n    entities: Object.fromEntries(items.map(i => [i.id, i]))\n  };\n}"
+    }
+  ],
+  "dataThinking": "Arrays are good at ordered access (index) and appending. Maps are good at keyed access. The moment you find yourself calling .find() inside a render loop or in a hot code path, normalize to a Map first. In React, this pattern often appears in useMemo: const itemMap = useMemo(() => new Map(items.map(i => [i.id, i])), [items]).",
+  "naiveApproach": {
+    "description": "Store data in an array; use .find() or .includes() for lookups. Simple to write, but O(n) per lookup.",
+    "complexity": "O(n) lookup, O(1) insertion"
+  },
+  "betterApproach": {
+    "description": "Build a Map or Set upfront in O(n). Then every lookup is O(1) average. Total: O(n) time + O(n) space for the map.",
+    "complexity": "O(n) build, O(1) lookup, O(n) space"
+  },
+  "implementation": {
+    "language": "typescript",
+    "code": "// Two Sum — classic hash map pattern\nfunction twoSum(nums: number[], target: number): [number, number] | null {\n  const seen = new Map<number, number>(); // value -> index\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (seen.has(complement)) {\n      return [seen.get(complement)!, i];\n    }\n    seen.set(nums[i], i);\n  }\n  return null;\n}\n\n// Frequency count\nfunction charFrequency(s: string): Map<string, number> {\n  const freq = new Map<string, number>();\n  for (const ch of s) {\n    freq.set(ch, (freq.get(ch) ?? 0) + 1);\n  }\n  return freq;\n}\n\n// Group items by key\nfunction groupBy<T>(items: T[], key: keyof T): Map<T[keyof T], T[]> {\n  const groups = new Map<T[keyof T], T[]>();\n  for (const item of items) {\n    const k = item[key];\n    if (!groups.has(k)) groups.set(k, []);\n    groups.get(k)!.push(item);\n  }\n  return groups;\n}\n\n// Normalize array to record\nfunction normalizeById<T extends { id: string }>(items: T[]): Record<string, T> {\n  return Object.fromEntries(items.map((item) => [item.id, item]));\n}"
+  },
+  "visualizationSteps": [
+    {
+      "label": "Start: Two Sum problem",
+      "state": { "nums": [2, 7, 11, 15], "target": 9, "i": 0, "seen": {}, "complement": null },
+      "explanation": "Looking for two numbers that sum to 9. Start with empty map. i=0, nums[0]=2."
+    },
+    {
+      "label": "i=0: Store 2 → 0",
+      "state": { "nums": [2, 7, 11, 15], "target": 9, "i": 0, "seen": { "2": 0 }, "complement": 7, "found": false },
+      "explanation": "complement = 9 - 2 = 7. 7 not in map. Store seen[2]=0 and move on."
+    },
+    {
+      "label": "i=1: Complement found!",
+      "state": { "nums": [2, 7, 11, 15], "target": 9, "i": 1, "seen": { "2": 0, "7": 1 }, "complement": 2, "found": true },
+      "explanation": "complement = 9 - 7 = 2. seen[2]=0 exists! Return [0, 1]. Only one pass through the array."
+    },
+    {
+      "label": "Result",
+      "state": { "result": [0, 1], "verification": "nums[0] + nums[1] = 2 + 7 = 9 ✓" },
+      "explanation": "O(n) time, O(n) space. Without the map, we'd need O(n²) with a nested loop."
+    }
+  ],
+  "practiceItems": [
+    {
+      "id": "hm-1",
+      "title": "First Non-Repeating Character",
+      "question": "Given a string, find the first character that appears exactly once. Return its index, or -1. (This mirrors finding the first unique event type in an analytics stream.)",
+      "hint1": "Two passes: first build a frequency map, then scan left to right for the first char with count 1.",
+      "hint2": "Use a Map<string, number> to preserve insertion order and get accurate counts.",
+      "solution": "function firstUnique(s: string): number {\n  const freq = new Map<string, number>();\n  for (const ch of s) freq.set(ch, (freq.get(ch) ?? 0) + 1);\n  for (let i = 0; i < s.length; i++) {\n    if (freq.get(s[i]) === 1) return i;\n  }\n  return -1;\n}",
+      "type": "pattern"
+    },
+    {
+      "id": "hm-2",
+      "title": "Normalize API Entities",
+      "question": "You receive an array of Comment objects: { id: string, postId: string, text: string, authorId: string }[]. Write a function that groups them by postId, and separately indexes them by id. Return both structures.",
+      "hint1": "One pass through the array can build both structures simultaneously.",
+      "hint2": "Use Map<string, Comment[]> for the grouping and Map<string, Comment> for the index.",
+      "solution": "interface Comment { id: string; postId: string; text: string; authorId: string; }\nfunction normalizeComments(comments: Comment[]) {\n  const byId = new Map<string, Comment>();\n  const byPost = new Map<string, Comment[]>();\n  for (const c of comments) {\n    byId.set(c.id, c);\n    if (!byPost.has(c.postId)) byPost.set(c.postId, []);\n    byPost.get(c.postId)!.push(c);\n  }\n  return { byId, byPost };\n}",
+      "type": "engineering"
+    },
+    {
+      "id": "hm-3",
+      "title": "Longest Substring Without Repeating Characters",
+      "question": "Find the length of the longest substring with all unique characters. Classic sliding window + set problem that appears in token parsers and highlight range detection.",
+      "hint1": "Use a Set to track characters in the current window. Expand right; when duplicate found, shrink from left.",
+      "hint2": "A Map<char, index> lets you jump the left pointer directly to the right position instead of shrinking one by one.",
+      "solution": "function lengthOfLongestSubstring(s: string): number {\n  const lastSeen = new Map<string, number>();\n  let maxLen = 0, left = 0;\n  for (let right = 0; right < s.length; right++) {\n    const ch = s[right];\n    if (lastSeen.has(ch) && lastSeen.get(ch)! >= left) {\n      left = lastSeen.get(ch)! + 1;\n    }\n    lastSeen.set(ch, right);\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n  return maxLen;\n}",
+      "type": "pattern"
+    }
+  ],
+  "reflectionPrompts": [
+    "When should you use a plain object {} vs Map vs Set in JavaScript? What are the trade-offs?",
+    "Hash maps use O(n) extra space. When is that trade-off not worth it?",
+    "How does the 'normalize by ID' pattern in Redux/Zustand relate to database indexing?",
+    "In React, when would you put a Map inside useMemo vs computing it directly in render?"
+  ]
+}

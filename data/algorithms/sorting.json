@@ -1,0 +1,90 @@
+{
+  "slug": "sorting",
+  "title": "Sorting",
+  "difficulty": "easy",
+  "tags": ["sorting", "comparison", "stability", "ranking"],
+  "summary": "Arrange data in a defined order — essential for table sorting, ranked feeds, and priority-based UI rendering.",
+  "overview": "Sorting algorithms order a collection by a comparator. JavaScript's Array.sort() is O(n log n) and uses a stable sort (TimSort). Understanding comparison functions, stable vs unstable sorts, and custom key extraction is more practically relevant for frontend engineers than implementing quicksort from scratch.",
+  "coreConcept": "A comparator function (a, b) => number returns negative (a before b), zero (equal), or positive (b before a). Stable sort preserves relative order of equal elements — critical for multi-key sorting. Custom key extraction (Schwartzian transform) avoids recomputing expensive keys on every comparison.",
+  "problemPatterns": [
+    "Sort table by column (multi-key)",
+    "Rank items by score with tiebreakers",
+    "Sort objects by nested property",
+    "Custom stable sort with multiple criteria",
+    "Partial sort: top-k elements"
+  ],
+  "signals": [
+    "Data must be displayed in a user-defined order",
+    "Multiple sort keys with priority",
+    "Sort stability matters (preserve previous sort)",
+    "Performance is important for large lists"
+  ],
+  "frontendScenarios": [
+    {
+      "title": "Multi-Column Table Sorting",
+      "description": "A data table lets users sort by any column, with secondary sort preserving previous order. Stable sort makes this work: sort by secondary key first, then by primary key.",
+      "example": "function multiSort<T>(items: T[], keys: Array<{key: keyof T, dir: 'asc'|'desc'}>): T[] {\n  return [...items].sort((a, b) => {\n    for (const {key, dir} of keys) {\n      const v = a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0;\n      if (v !== 0) return dir === 'asc' ? v : -v;\n    }\n    return 0;\n  });\n}"
+    },
+    {
+      "title": "Priority Feed Ranking",
+      "description": "A social feed sorts posts by: pinned first, then by engagement score descending, then by recency descending. Three-level comparator.",
+      "example": "posts.sort((a, b) => {\n  if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;\n  if (b.score !== a.score) return b.score - a.score;\n  return b.createdAt - a.createdAt;\n});"
+    }
+  ],
+  "dataThinking": "In frontend, sorting is usually about comparator design, not algorithm choice. The browser's sort is fast enough. Your challenge is: (1) correct multi-key comparators, (2) stable sort semantics for progressive refinement, (3) extracting sort keys efficiently (precompute expensive keys before sorting).",
+  "naiveApproach": {
+    "description": "Bubble sort or selection sort — O(n²). Readable but impractical for large data.",
+    "complexity": "O(n²) time, O(1) space"
+  },
+  "betterApproach": {
+    "description": "Use Array.prototype.sort() with a custom comparator. For expensive key extraction, use the Schwartzian transform: map to [key, item], sort by key, map back to items.",
+    "complexity": "O(n log n) time, O(n) space"
+  },
+  "implementation": {
+    "language": "typescript",
+    "code": "// Basic comparator patterns\nconst byNumber = (a: number, b: number) => a - b;\nconst byString = (a: string, b: string) => a.localeCompare(b);\nconst byDate = (a: Date, b: Date) => a.getTime() - b.getTime();\n\n// Sort objects by property\nfunction sortBy<T>(items: T[], key: keyof T, dir: 'asc' | 'desc' = 'asc'): T[] {\n  return [...items].sort((a, b) => {\n    const av = a[key], bv = b[key];\n    const cmp = av < bv ? -1 : av > bv ? 1 : 0;\n    return dir === 'asc' ? cmp : -cmp;\n  });\n}\n\n// Multi-key sort\ntype SortKey<T> = { key: keyof T; dir?: 'asc' | 'desc' };\nfunction multiSort<T>(items: T[], keys: SortKey<T>[]): T[] {\n  return [...items].sort((a, b) => {\n    for (const { key, dir = 'asc' } of keys) {\n      const av = a[key], bv = b[key];\n      const cmp = av < bv ? -1 : av > bv ? 1 : 0;\n      if (cmp !== 0) return dir === 'asc' ? cmp : -cmp;\n    }\n    return 0;\n  });\n}\n\n// Schwartzian transform for expensive key extraction\nfunction sortByExpensiveKey<T>(items: T[], getKey: (item: T) => number): T[] {\n  return items\n    .map((item) => ({ item, key: getKey(item) }))\n    .sort((a, b) => a.key - b.key)\n    .map(({ item }) => item);\n}"
+  },
+  "visualizationSteps": [
+    {
+      "label": "Unsorted feed items",
+      "state": { "items": [{ "id": 1, "pinned": false, "score": 45, "age": 2 }, { "id": 2, "pinned": true, "score": 10, "age": 5 }, { "id": 3, "pinned": false, "score": 90, "age": 1 }] },
+      "explanation": "Three items: one pinned (low score), two regular. We want: pinned first, then by score."
+    },
+    {
+      "label": "After sort by pinned first",
+      "state": { "items": [{ "id": 2, "pinned": true, "score": 10 }, { "id": 3, "pinned": false, "score": 90 }, { "id": 1, "pinned": false, "score": 45 }] },
+      "explanation": "Item 2 (pinned) rises to top regardless of score. Regular items sorted by score descending."
+    },
+    {
+      "label": "Comparator logic",
+      "state": { "comparator": "if pinned differs: pinned first. else: higher score first. else: newer first." },
+      "explanation": "The comparator is a priority chain. Each level only applies when higher-priority keys are equal."
+    }
+  ],
+  "practiceItems": [
+    {
+      "id": "sort-1",
+      "title": "Table Column Sort with Toggle",
+      "question": "Implement a useSortedData hook that takes an array and manages sort state (column key + direction). Clicking the same column toggles asc/desc; clicking a new column starts asc.",
+      "hint1": "Store { key: string, dir: 'asc'|'desc' } as sort state. useMemo the sorted array.",
+      "hint2": "When setting key: if same key, toggle dir. If new key, set dir to 'asc'.",
+      "solution": "function useSortedData<T extends Record<string,unknown>>(data: T[]) {\n  const [sort, setSort] = React.useState<{key: keyof T, dir:'asc'|'desc'}|null>(null);\n  const sorted = React.useMemo(() => {\n    if (!sort) return data;\n    return [...data].sort((a,b) => {\n      const av = a[sort.key], bv = b[sort.key];\n      const cmp = av < bv ? -1 : av > bv ? 1 : 0;\n      return sort.dir === 'asc' ? cmp : -cmp;\n    });\n  }, [data, sort]);\n  const toggleSort = (key: keyof T) => setSort(s =>\n    s?.key === key ? { key, dir: s.dir==='asc'?'desc':'asc' } : { key, dir: 'asc' }\n  );\n  return { sorted, sort, toggleSort };\n}",
+      "type": "engineering"
+    },
+    {
+      "id": "sort-2",
+      "title": "Top-K Elements",
+      "question": "Given an array of products with scores, return the top K products without sorting the entire array. This is more efficient when K is much smaller than N.",
+      "hint1": "You don't need to sort everything — partial sort or a min-heap of size K works. For simplicity, sort descending and slice.",
+      "hint2": "For the optimal O(n log k) solution, maintain a min-heap of size K. If a new item beats the heap minimum, replace it.",
+      "solution": "// Simple O(n log n) — fine for most frontend cases\nfunction topK<T>(items: T[], score: (item: T) => number, k: number): T[] {\n  return [...items]\n    .sort((a, b) => score(b) - score(a))\n    .slice(0, k);\n}",
+      "type": "pattern"
+    }
+  ],
+  "reflectionPrompts": [
+    "JavaScript's Array.sort() became stable in V8 v7.0 (Node 11+). Why does sort stability matter for multi-column table sorting?",
+    "What is the Schwartzian transform and when would you use it in a React application?",
+    "When would you implement a custom sort algorithm rather than using the built-in Array.sort()?",
+    "How does sorting interact with React's key reconciliation when rendering sorted lists?"
+  ]
+}
