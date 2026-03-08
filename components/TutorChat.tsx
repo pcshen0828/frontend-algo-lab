@@ -7,32 +7,88 @@ interface Message {
   content: string;
 }
 
-export default function TutorChat({ topicSlug }: { topicSlug: string }) {
+const STARTER_QUESTIONS: Record<string, string[]> = {
+  "binary-search": [
+    "What's the difference between exact search and boundary search?",
+    "How does this apply to virtual lists?",
+    "When does binary search fail?",
+  ],
+  "hash-map-set": [
+    "When should I use Map vs plain object?",
+    "How does normalization work in Redux?",
+    "What's the space trade-off?",
+  ],
+  "tree-traversal": [
+    "When do I use BFS vs DFS?",
+    "How do I avoid stack overflow on deep trees?",
+    "How does this relate to React's rendering?",
+  ],
+  "sliding-window": [
+    "When does the window expand vs shrink?",
+    "How is this different from two pointers?",
+    "What makes a problem a sliding window problem?",
+  ],
+  "two-pointers": [
+    "When do both pointers start at the same end?",
+    "How does sorting help with two-pointer problems?",
+    "What's the difference between two pointers and sliding window?",
+  ],
+  sorting: [
+    "When would I use merge sort vs quicksort in practice?",
+    "How does JavaScript's built-in sort work?",
+    "What sorting algorithm is best for nearly-sorted data?",
+  ],
+  recursion: [
+    "How do I convert a recursive solution to iterative?",
+    "When should I use memoization with recursion?",
+    "How do I identify the base case?",
+  ],
+  "stack-queue": [
+    "When do I use a stack vs a queue?",
+    "How does a stack relate to recursion?",
+    "What frontend problems are naturally stack-based?",
+  ],
+  "bfs-dfs": [
+    "When is BFS better than DFS?",
+    "How do I implement BFS iteratively?",
+    "What's the space complexity difference?",
+  ],
+  "dynamic-programming": [
+    "How do I recognize a DP problem?",
+    "What's the difference between top-down and bottom-up DP?",
+    "How do I find the recurrence relation?",
+  ],
+};
+
+export default function TutorChat({
+  topicSlug,
+  topicTitle,
+}: {
+  topicSlug: string;
+  topicTitle: string;
+}) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content:
-        "Hi! I'm your AI tutor for this topic. Ask me anything — about the concept, a specific pattern, or how it applies to your frontend work.",
+      content: `Hi! I can explain ${topicTitle} concepts, walk through examples, or help you spot when to apply it.`,
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const hasUserMessages = messages.some((m) => m.role === "user");
+  const starterQuestions = STARTER_QUESTIONS[topicSlug] ?? [];
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function sendMessage(e: React.FormEvent) {
-    e.preventDefault();
-    const text = input.trim();
+  async function send(text: string) {
     if (!text || loading) return;
-
-    const userMsg: Message = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
     setInput("");
     setLoading(true);
-
     try {
       const res = await fetch("/api/tutor", {
         method: "POST",
@@ -57,12 +113,20 @@ export default function TutorChat({ topicSlug }: { topicSlug: string }) {
     }
   }
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    send(input.trim());
+  }
+
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden flex flex-col">
       <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-        <h3 className="font-semibold text-gray-900 text-sm">AI Tutor</h3>
-        <p className="text-xs text-gray-500">Ask questions about this topic</p>
+        <h3 className="font-semibold text-gray-900 text-sm">
+          {topicTitle} — AI Tutor
+        </h3>
+        <p className="text-xs text-gray-500">Ask me anything about this topic</p>
       </div>
+
       <div className="flex-1 p-4 space-y-4 overflow-y-auto max-h-96">
         {messages.map((msg, i) => (
           <div
@@ -89,19 +153,38 @@ export default function TutorChat({ topicSlug }: { topicSlug: string }) {
         )}
         <div ref={bottomRef} />
       </div>
-      <form onSubmit={sendMessage} className="border-t border-gray-200 p-3 flex gap-2">
+
+      {/* Starter question chips — shown before first user message */}
+      {!hasUserMessages && starterQuestions.length > 0 && (
+        <div className="px-4 pb-3 flex flex-wrap gap-2">
+          {starterQuestions.map((q) => (
+            <button
+              key={q}
+              onClick={() => send(q)}
+              className="text-xs px-3 py-1.5 rounded-full border border-blue-200 text-blue-700 hover:bg-blue-50 cursor-pointer transition-colors"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="border-t border-gray-200 p-3 flex gap-2"
+      >
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question..."
+          placeholder="e.g. When would I use this in a React app?"
           disabled={loading}
           className="flex-1 text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
         />
         <button
           type="submit"
           disabled={!input.trim() || loading}
-          className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           Send
         </button>

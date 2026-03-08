@@ -26,7 +26,7 @@ function SectionHeading({ id, children }: { id: string; children: React.ReactNod
   return (
     <h2
       id={id}
-      className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-4 scroll-mt-20"
+      className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-4 mt-2 scroll-mt-20"
     >
       {children}
     </h2>
@@ -46,19 +46,19 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         <TopicSidebar />
 
         {/* Main content */}
-        <article className="flex-1 min-w-0 space-y-10">
+        <article className="flex-1 min-w-0 space-y-12">
           <TopicHeader topic={topic} />
 
           {/* Overview */}
           <section id="overview">
             <SectionHeading id="overview">Overview</SectionHeading>
-            <p className="text-gray-700 leading-relaxed">{topic.overview}</p>
+            <p className="text-base leading-8 text-gray-700">{topic.overview}</p>
           </section>
 
           {/* Core Concept */}
           <section id="core-concept">
             <SectionHeading id="core-concept">Core Concept</SectionHeading>
-            <p className="text-gray-700 leading-relaxed">{topic.coreConcept}</p>
+            <p className="text-base leading-8 text-gray-700">{topic.coreConcept}</p>
           </section>
 
           {/* Problem Patterns */}
@@ -76,9 +76,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
             <SectionHeading id="frontend-scenarios">Frontend Scenarios</SectionHeading>
             <div className="space-y-6">
               {topic.frontendScenarios.map((s, i) => (
-                <div key={i} className="border border-gray-200 rounded-lg p-5">
+                <div key={i} className="border border-gray-200 rounded-lg p-6">
                   <h3 className="font-semibold text-gray-900 mb-2">{s.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                  <p className="text-gray-600 text-sm leading-7 mb-3">
                     {s.description}
                   </p>
                   <CodeBlock code={s.example} language="typescript" />
@@ -90,14 +90,14 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           {/* Data Thinking */}
           <section id="data-thinking">
             <SectionHeading id="data-thinking">Data Thinking</SectionHeading>
-            <p className="text-gray-700 leading-relaxed">{topic.dataThinking}</p>
+            <p className="text-base leading-8 text-gray-700">{topic.dataThinking}</p>
           </section>
 
           {/* Approaches */}
           <section id="naive-approach">
             <SectionHeading id="naive-approach">Naive Approach</SectionHeading>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 space-y-1">
-              <p className="text-gray-700 leading-relaxed">{topic.naiveApproach.description}</p>
+              <p className="text-base text-gray-700 leading-relaxed">{topic.naiveApproach.description}</p>
               <p className="text-sm text-red-700 font-mono">{topic.naiveApproach.complexity}</p>
             </div>
           </section>
@@ -105,7 +105,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           <section id="better-approach">
             <SectionHeading id="better-approach">Better Approach</SectionHeading>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-1">
-              <p className="text-gray-700 leading-relaxed">{topic.betterApproach.description}</p>
+              <p className="text-base text-gray-700 leading-relaxed">{topic.betterApproach.description}</p>
               <p className="text-sm text-green-700 font-mono">{topic.betterApproach.complexity}</p>
             </div>
           </section>
@@ -142,7 +142,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           {/* AI Tutor */}
           <section id="ai-tutor">
             <SectionHeading id="ai-tutor">Ask the AI Tutor</SectionHeading>
-            <TutorChat topicSlug={topic.slug} />
+            <TutorChat topicSlug={topic.slug} topicTitle={topic.title} />
           </section>
         </article>
       </div>
