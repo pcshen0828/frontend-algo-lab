@@ -53,24 +53,24 @@
   },
   "visualizationSteps": [
     {
-      "label": "Tree structure",
-      "state": { "tree": { "A": ["B", "C"], "B": ["D", "E"], "C": ["F"], "D": [], "E": [], "F": [] }, "traversal": "DFS pre-order", "visited": [], "queue": ["A"] },
-      "explanation": "A has children B, C. B has children D, E. C has child F. Starting DFS pre-order from A."
+      "label": "Set up — push root A onto stack",
+      "state": { "nodes": ["A","B","C","D","E","F"], "edges": ["A→B","A→C","B→D","B→E","C→F"], "traversal": "DFS pre-order", "visited": [], "stack": ["A"], "current": null },
+      "explanation": "Tree: A has children B, C. B has children D, E. C has child F. We use an explicit stack for iterative DFS. Start by pushing root A."
     },
     {
-      "label": "Visit A, recurse to B",
+      "label": "Pop A → visit A, push children C then B",
       "state": { "visited": ["A"], "stack": ["C", "B"], "current": "B" },
-      "explanation": "Visit A first (pre-order). Push children right-to-left on stack: C, then B. Pop B next."
+      "explanation": "Visit A first (pre-order: node before children). Push children right-to-left so left child B sits on top. Next pop: B."
     },
     {
-      "label": "Visit B, D, E (subtree)",
+      "label": "Pop B → visit B, push E then D; pop D, pop E",
       "state": { "visited": ["A", "B", "D", "E"], "stack": ["C"], "current": "C" },
-      "explanation": "Visit B, push E then D. Pop D (leaf, no children), visit D. Pop E (leaf), visit E. B's subtree is done."
+      "explanation": "Visit B, push E then D. Pop D (leaf — no children to push), visit D. Pop E (leaf), visit E. B's entire subtree is done."
     },
     {
-      "label": "Visit C, F — complete",
+      "label": "Pop C → visit C, push F; pop F — traversal complete",
       "state": { "visited": ["A", "B", "D", "E", "C", "F"], "stack": [], "current": null, "complete": true },
-      "explanation": "Pop C, visit it, push F. Pop F (leaf), visit F. Stack empty — traversal complete. Pre-order: A B D E C F."
+      "explanation": "Pop C, visit it, push F. Pop F (leaf), visit F. Stack is empty — traversal complete. Pre-order result: A B D E C F."
     }
   ],
   "practiceItems": [
