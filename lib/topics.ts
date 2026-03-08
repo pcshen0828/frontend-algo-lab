@@ -2,13 +2,13 @@ import { loadAllTopics, loadTopicBySlug } from "./topic-loader";
 import type { AlgorithmTopic } from "./types";
 
 export const CURRICULUM_ORDER: string[] = [
-  "binary-search",
   "hash-map-set",
   "tree-traversal",
+  "binary-search",
   "stack-queue",
-  "sliding-window",
   "sorting",
   "two-pointers",
+  "sliding-window",
   "recursion",
   "bfs-dfs",
   "dynamic-programming",
@@ -35,4 +35,16 @@ export function getTopicBySlug(slug: string): AlgorithmTopic | null {
   } catch {
     return null;
   }
+}
+
+export function getPreviousTopic(slug: string): AlgorithmTopic | null {
+  const idx = CURRICULUM_ORDER.indexOf(slug);
+  if (idx <= 0) return null;
+  return getTopicBySlug(CURRICULUM_ORDER[idx - 1]);
+}
+
+export function getNextTopic(slug: string): AlgorithmTopic | null {
+  const idx = CURRICULUM_ORDER.indexOf(slug);
+  if (idx === -1 || idx >= CURRICULUM_ORDER.length - 1) return null;
+  return getTopicBySlug(CURRICULUM_ORDER[idx + 1]);
 }

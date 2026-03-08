@@ -7,6 +7,7 @@ import VisualizationStepper from "@/components/VisualizationStepper";
 import PracticeSection from "@/components/PracticeSection";
 import TutorChat from "@/components/TutorChat";
 import TopicSidebar from "@/components/TopicSidebar";
+import TopicNavigation from "@/components/TopicNavigation";
 
 export function generateStaticParams() {
   return CURRICULUM_ORDER.map((slug) => ({ slug }));
@@ -134,6 +135,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           <section id="reflection">
             <SectionList heading="Reflection Prompts" items={topic.reflectionPrompts} />
           </section>
+
+          {/* Topic Navigation */}
+          <TopicNavigation currentSlug={topic.slug} />
 
         </article>
       </div>
