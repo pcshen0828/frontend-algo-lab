@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { getTopicBySlug, CURRICULUM_ORDER } from "@/lib/topics";
 
 export default function Home() {
+  const firstTopic = getTopicBySlug(CURRICULUM_ORDER[0]);
+  const firstTopicTitle = firstTopic?.title ?? CURRICULUM_ORDER[0];
+  const firstTopicSlug = firstTopic?.slug ?? CURRICULUM_ORDER[0];
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
       {/* Hero */}
@@ -53,14 +58,14 @@ export default function Home() {
       <section className="text-center bg-white border border-gray-200 rounded-lg p-10">
         <h2 className="text-2xl font-bold text-gray-900 mb-3">Ready to start?</h2>
         <p className="text-gray-600 mb-6">
-          Begin with Binary Search or jump to any topic in the curriculum.
+          Begin with {firstTopicTitle} or jump to any topic in the curriculum.
         </p>
         <div className="flex justify-center gap-4 flex-wrap">
           <Link
-            href="/algorithms/binary-search"
+            href={`/algorithms/${firstTopicSlug}`}
             className="bg-blue-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Start with Binary Search
+            Start with {firstTopicTitle}
           </Link>
           <Link
             href="/algorithms"
