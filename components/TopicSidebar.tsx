@@ -53,7 +53,6 @@ export default function TopicSidebar() {
     return () => observer.disconnect();
   }, []);
 
-
   function scrollToSection(id: string) {
     const el = document.getElementById(id);
     if (!el) return;

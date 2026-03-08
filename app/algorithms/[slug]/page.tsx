@@ -138,7 +138,6 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
           {/* Topic Navigation */}
           <TopicNavigation currentSlug={topic.slug} />
-
         </article>
       </div>
       <TutorChat topicSlug={topic.slug} topicTitle={topic.title} />
