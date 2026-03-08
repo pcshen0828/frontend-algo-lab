@@ -135,13 +135,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
             <SectionList heading="Reflection Prompts" items={topic.reflectionPrompts} />
           </section>
 
-          {/* AI Tutor */}
-          <section id="ai-tutor">
-            <SectionHeading id="ai-tutor">Ask the AI Tutor</SectionHeading>
-            <TutorChat topicSlug={topic.slug} topicTitle={topic.title} />
-          </section>
         </article>
       </div>
+      <TutorChat topicSlug={topic.slug} topicTitle={topic.title} />
     </div>
   );
 }

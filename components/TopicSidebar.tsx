@@ -15,7 +15,6 @@ const SECTIONS = [
   { id: "visualization", label: "Visualization" },
   { id: "practice", label: "Practice" },
   { id: "reflection", label: "Reflection" },
-  { id: "ai-tutor", label: "AI Tutor" },
 ];
 
 export default function TopicSidebar() {
