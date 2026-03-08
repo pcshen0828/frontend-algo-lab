@@ -6,7 +6,7 @@ import CodeBlock from "@/components/CodeBlock";
 import VisualizationStepper from "@/components/VisualizationStepper";
 import PracticeSection from "@/components/PracticeSection";
 import TutorChat from "@/components/TutorChat";
-import TopicSidebar from "@/components/TopicSidebar";
+import TopicSidebar, { PAGE_BOTTOM_ID } from "@/components/TopicSidebar";
 import TopicNavigation from "@/components/TopicNavigation";
 
 export function generateStaticParams() {
@@ -138,6 +138,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
           {/* Topic Navigation */}
           <TopicNavigation currentSlug={topic.slug} />
+
+          {/* Bottom sentinel for sidebar scroll detection */}
+          <div id={PAGE_BOTTOM_ID} />
         </article>
       </div>
       <TutorChat topicSlug={topic.slug} topicTitle={topic.title} />

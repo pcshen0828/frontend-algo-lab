@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+export const PAGE_BOTTOM_ID = "page-bottom";
+
 const SECTIONS = [
   { id: "overview", label: "Overview" },
   { id: "core-concept", label: "Core Concept" },
@@ -51,6 +53,19 @@ export default function TopicSidebar() {
     }
 
     return () => observer.disconnect();
+  }, []);
+
+  // Activate the last section when the user reaches the bottom of the page
+  useEffect(() => {
+    const sentinel = document.getElementById(PAGE_BOTTOM_ID);
+    if (!sentinel) return;
+
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setActiveId(SECTIONS[SECTIONS.length - 1].id);
+    });
+    obs.observe(sentinel);
+
+    return () => obs.disconnect();
   }, []);
 
   function scrollToSection(id: string) {
