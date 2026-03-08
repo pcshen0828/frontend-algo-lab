@@ -40,8 +40,8 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
   if (!topic) notFound();
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10">
-      <div className="flex gap-10">
+    <div className="max-w-5xl mx-auto px-4 py-10 pb-24">
+      <div className="flex gap-10 items-start">
         {/* Sidebar */}
         <TopicSidebar />
 
