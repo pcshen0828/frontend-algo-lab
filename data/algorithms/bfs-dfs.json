@@ -49,7 +49,11 @@
   "visualizationSteps": [
     {
       "label": "Graph: A→B, A→C, B→D, C→D",
-      "state": { "graph": { "A": ["B","C"], "B": ["D"], "C": ["D"], "D": [] }, "start": "A", "goal": "D" },
+      "state": {
+        "graph": { "A": ["B", "C"], "B": ["D"], "C": ["D"], "D": [] },
+        "start": "A",
+        "goal": "D"
+      },
       "explanation": "Find shortest path from A to D. Two paths exist: A→B→D and A→C→D (both length 2)."
     },
     {
@@ -59,12 +63,24 @@
     },
     {
       "label": "BFS: level 1 = [B, C]",
-      "state": { "queue": [["A","B"], ["A","C"]], "visited": ["A","B","C"], "level": 1 },
+      "state": {
+        "queue": [
+          ["A", "B"],
+          ["A", "C"]
+        ],
+        "visited": ["A", "B", "C"],
+        "level": 1
+      },
       "explanation": "Process [A]: enqueue [A,B] and [A,C]. Both at distance 1 from A."
     },
     {
       "label": "BFS: level 2 — D found",
-      "state": { "queue": [], "visited": ["A","B","C","D"], "result": ["A","B","D"], "level": 2 },
+      "state": {
+        "queue": [],
+        "visited": ["A", "B", "C", "D"],
+        "result": ["A", "B", "D"],
+        "level": 2
+      },
       "explanation": "Process [A,B]: neighbor D not visited → enqueue [A,B,D]. D is target — return! Path length = 2."
     }
   ],

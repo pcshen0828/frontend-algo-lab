@@ -54,7 +54,14 @@
   "visualizationSteps": [
     {
       "label": "Set up — push root A onto stack",
-      "state": { "nodes": ["A","B","C","D","E","F"], "edges": ["A→B","A→C","B→D","B→E","C→F"], "traversal": "DFS pre-order", "visited": [], "stack": ["A"], "current": null },
+      "state": {
+        "nodes": ["A", "B", "C", "D", "E", "F"],
+        "edges": ["A→B", "A→C", "B→D", "B→E", "C→F"],
+        "traversal": "DFS pre-order",
+        "visited": [],
+        "stack": ["A"],
+        "current": null
+      },
       "explanation": "Tree: A has children B, C. B has children D, E. C has child F. We use an explicit stack for iterative DFS. Start by pushing root A."
     },
     {
@@ -69,7 +76,12 @@
     },
     {
       "label": "Pop C → visit C, push F; pop F — traversal complete",
-      "state": { "visited": ["A", "B", "D", "E", "C", "F"], "stack": [], "current": null, "complete": true },
+      "state": {
+        "visited": ["A", "B", "D", "E", "C", "F"],
+        "stack": [],
+        "current": null,
+        "complete": true
+      },
       "explanation": "Pop C, visit it, push F. Pop F (leaf), visit F. Stack is empty — traversal complete. Pre-order result: A B D E C F."
     }
   ],

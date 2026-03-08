@@ -49,17 +49,29 @@
   "visualizationSteps": [
     {
       "label": "Undo stack after 3 edits",
-      "state": { "undoStack": ["initial", "edit1", "edit2", "edit3"], "redoStack": [], "current": "edit3" },
+      "state": {
+        "undoStack": ["initial", "edit1", "edit2", "edit3"],
+        "redoStack": [],
+        "current": "edit3"
+      },
       "explanation": "User made 3 edits. Each push adds to undoStack. Current state is the top: 'edit3'."
     },
     {
       "label": "After undo",
-      "state": { "undoStack": ["initial", "edit1", "edit2"], "redoStack": ["edit3"], "current": "edit2" },
+      "state": {
+        "undoStack": ["initial", "edit1", "edit2"],
+        "redoStack": ["edit3"],
+        "current": "edit2"
+      },
       "explanation": "Undo: pop 'edit3' from undoStack, push to redoStack. Current is now 'edit2'."
     },
     {
       "label": "After new edit — redo cleared",
-      "state": { "undoStack": ["initial", "edit1", "edit2", "newEdit"], "redoStack": [], "current": "newEdit" },
+      "state": {
+        "undoStack": ["initial", "edit1", "edit2", "newEdit"],
+        "redoStack": [],
+        "current": "newEdit"
+      },
       "explanation": "New edit while redoStack had items: clear redoStack (can't redo past a branch), push new state."
     }
   ],

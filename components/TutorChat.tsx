@@ -96,10 +96,7 @@ export default function TutorChat({
         body: JSON.stringify({ topicSlug, userMessage: text }),
       });
       const data = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.reply },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -121,23 +118,16 @@ export default function TutorChat({
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden flex flex-col">
       <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-        <h3 className="font-semibold text-gray-900 text-sm">
-          {topicTitle} — AI Tutor
-        </h3>
+        <h3 className="font-semibold text-gray-900 text-sm">{topicTitle} — AI Tutor</h3>
         <p className="text-xs text-gray-500">Ask me anything about this topic</p>
       </div>
 
       <div className="flex-1 p-4 space-y-4 overflow-y-auto max-h-96">
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-          >
+          <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
               className={`max-w-[85%] rounded-lg px-4 py-2.5 text-sm leading-relaxed ${
-                msg.role === "user"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-800"
+                msg.role === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
               }`}
             >
               {msg.content}
@@ -169,10 +159,7 @@ export default function TutorChat({
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="border-t border-gray-200 p-3 flex gap-2"
-      >
+      <form onSubmit={handleSubmit} className="border-t border-gray-200 p-3 flex gap-2">
         <input
           type="text"
           value={input}

@@ -47,17 +47,31 @@
   "visualizationSteps": [
     {
       "label": "Unsorted feed items",
-      "state": { "items": [{ "id": 1, "pinned": false, "score": 45, "age": 2 }, { "id": 2, "pinned": true, "score": 10, "age": 5 }, { "id": 3, "pinned": false, "score": 90, "age": 1 }] },
+      "state": {
+        "items": [
+          { "id": 1, "pinned": false, "score": 45, "age": 2 },
+          { "id": 2, "pinned": true, "score": 10, "age": 5 },
+          { "id": 3, "pinned": false, "score": 90, "age": 1 }
+        ]
+      },
       "explanation": "Three items: one pinned (low score), two regular. We want: pinned first, then by score."
     },
     {
       "label": "After sort by pinned first",
-      "state": { "items": [{ "id": 2, "pinned": true, "score": 10 }, { "id": 3, "pinned": false, "score": 90 }, { "id": 1, "pinned": false, "score": 45 }] },
+      "state": {
+        "items": [
+          { "id": 2, "pinned": true, "score": 10 },
+          { "id": 3, "pinned": false, "score": 90 },
+          { "id": 1, "pinned": false, "score": 45 }
+        ]
+      },
       "explanation": "Item 2 (pinned) rises to top regardless of score. Regular items sorted by score descending."
     },
     {
       "label": "Comparator logic",
-      "state": { "comparator": "if pinned differs: pinned first. else: higher score first. else: newer first." },
+      "state": {
+        "comparator": "if pinned differs: pinned first. else: higher score first. else: newer first."
+      },
       "explanation": "The comparator is a priority chain. Each level only applies when higher-priority keys are equal."
     }
   ],

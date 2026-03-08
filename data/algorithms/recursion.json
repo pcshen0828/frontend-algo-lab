@@ -52,12 +52,17 @@
     },
     {
       "label": "Unwinding to base case",
-      "state": { "stack": ["factorial(4)", "factorial(3)", "factorial(2)", "factorial(1)"], "baseCase": "factorial(1) = 1" },
+      "state": {
+        "stack": ["factorial(4)", "factorial(3)", "factorial(2)", "factorial(1)"],
+        "baseCase": "factorial(1) = 1"
+      },
       "explanation": "Stack builds up until base case factorial(1)=1. Now we start returning."
     },
     {
       "label": "Returns propagate up",
-      "state": { "returns": { "factorial(1)": 1, "factorial(2)": 2, "factorial(3)": 6, "factorial(4)": 24 } },
+      "state": {
+        "returns": { "factorial(1)": 1, "factorial(2)": 2, "factorial(3)": 6, "factorial(4)": 24 }
+      },
       "explanation": "Each frame multiplies: 1→2→6→24. The call stack unwinds, combining results bottom-up."
     }
   ],

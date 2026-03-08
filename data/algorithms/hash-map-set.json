@@ -59,12 +59,26 @@
     },
     {
       "label": "i=0: Store 2 → 0",
-      "state": { "nums": [2, 7, 11, 15], "target": 9, "i": 0, "seen": { "2": 0 }, "complement": 7, "found": false },
+      "state": {
+        "nums": [2, 7, 11, 15],
+        "target": 9,
+        "i": 0,
+        "seen": { "2": 0 },
+        "complement": 7,
+        "found": false
+      },
       "explanation": "complement = 9 - 2 = 7. 7 not in map. Store seen[2]=0 and move on."
     },
     {
       "label": "i=1: Complement found!",
-      "state": { "nums": [2, 7, 11, 15], "target": 9, "i": 1, "seen": { "2": 0, "7": 1 }, "complement": 2, "found": true },
+      "state": {
+        "nums": [2, 7, 11, 15],
+        "target": 9,
+        "i": 1,
+        "seen": { "2": 0, "7": 1 },
+        "complement": 2,
+        "found": true
+      },
       "explanation": "complement = 9 - 7 = 2. seen[2]=0 exists! Return [0, 1]. Only one pass through the array."
     },
     {

@@ -78,9 +78,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
               {topic.frontendScenarios.map((s, i) => (
                 <div key={i} className="border border-gray-200 rounded-lg p-6">
                   <h3 className="font-semibold text-gray-900 mb-2">{s.title}</h3>
-                  <p className="text-gray-600 text-sm leading-7 mb-3">
-                    {s.description}
-                  </p>
+                  <p className="text-gray-600 text-sm leading-7 mb-3">{s.description}</p>
                   <CodeBlock code={s.example} language="typescript" />
                 </div>
               ))}
@@ -97,7 +95,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           <section id="naive-approach">
             <SectionHeading id="naive-approach">Naive Approach</SectionHeading>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 space-y-1">
-              <p className="text-base text-gray-700 leading-relaxed">{topic.naiveApproach.description}</p>
+              <p className="text-base text-gray-700 leading-relaxed">
+                {topic.naiveApproach.description}
+              </p>
               <p className="text-sm text-red-700 font-mono">{topic.naiveApproach.complexity}</p>
             </div>
           </section>
@@ -105,7 +105,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           <section id="better-approach">
             <SectionHeading id="better-approach">Better Approach</SectionHeading>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-1">
-              <p className="text-base text-gray-700 leading-relaxed">{topic.betterApproach.description}</p>
+              <p className="text-base text-gray-700 leading-relaxed">
+                {topic.betterApproach.description}
+              </p>
               <p className="text-sm text-green-700 font-mono">{topic.betterApproach.complexity}</p>
             </div>
           </section>
@@ -113,10 +115,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           {/* Implementation */}
           <section id="implementation">
             <SectionHeading id="implementation">Implementation</SectionHeading>
-            <CodeBlock
-              code={topic.implementation.code}
-              language={topic.implementation.language}
-            />
+            <CodeBlock code={topic.implementation.code} language={topic.implementation.language} />
           </section>
 
           {/* Visualization */}
@@ -133,10 +132,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
           {/* Reflection */}
           <section id="reflection">
-            <SectionList
-              heading="Reflection Prompts"
-              items={topic.reflectionPrompts}
-            />
+            <SectionList heading="Reflection Prompts" items={topic.reflectionPrompts} />
           </section>
 
           {/* AI Tutor */}

@@ -46,18 +46,12 @@ function StateValue({
     return <span className="text-green-400 font-medium text-sm">✓ true</span>;
   }
   if (typeof value === "object") {
-    return (
-      <span className="text-gray-300 font-mono text-xs">
-        {JSON.stringify(value)}
-      </span>
-    );
+    return <span className="text-gray-300 font-mono text-xs">{JSON.stringify(value)}</span>;
   }
   return (
     <span
       className={`px-2 py-0.5 rounded text-xs font-mono font-medium ${
-        typeof value === "number"
-          ? "bg-blue-900 text-blue-200"
-          : "bg-gray-700 text-gray-200"
+        typeof value === "number" ? "bg-blue-900 text-blue-200" : "bg-gray-700 text-gray-200"
       }`}
     >
       {String(value)}
@@ -65,11 +59,7 @@ function StateValue({
   );
 }
 
-export default function VisualizationStepper({
-  steps,
-}: {
-  steps: VisualizationStep[];
-}) {
+export default function VisualizationStepper({ steps }: { steps: VisualizationStep[] }) {
   const [current, setCurrent] = useState(0);
 
   const prev = useCallback(() => setCurrent((c) => Math.max(0, c - 1)), []);
@@ -119,9 +109,7 @@ export default function VisualizationStepper({
       <div className="bg-gray-900 px-4 py-3 space-y-2.5">
         {Object.entries(step.state).map(([key, value]) => (
           <div key={key} className="flex items-start gap-3">
-            <span className="text-blue-400 text-sm font-mono shrink-0 w-24 pt-0.5">
-              {key}
-            </span>
+            <span className="text-blue-400 text-sm font-mono shrink-0 w-24 pt-0.5">{key}</span>
             <div className="flex-1 min-w-0">
               <StateValue
                 stateKey={key}

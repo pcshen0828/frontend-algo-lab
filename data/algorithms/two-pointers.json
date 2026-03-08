@@ -49,17 +49,24 @@
   "visualizationSteps": [
     {
       "label": "Two Sum: sorted=[2,7,11,15], target=9",
-      "state": { "arr": [2,7,11,15], "target": 9, "left": 0, "right": 3, "sum": 17 },
+      "state": { "arr": [2, 7, 11, 15], "target": 9, "left": 0, "right": 3, "sum": 17 },
       "explanation": "left=0 (value 2), right=3 (value 15). sum=17 > 9, so move right pointer left."
     },
     {
       "label": "sum=13, still too big",
-      "state": { "arr": [2,7,11,15], "target": 9, "left": 0, "right": 2, "sum": 13 },
+      "state": { "arr": [2, 7, 11, 15], "target": 9, "left": 0, "right": 2, "sum": 13 },
       "explanation": "right=2 (value 11). sum=13 > 9. Move right left again."
     },
     {
       "label": "sum=9, found!",
-      "state": { "arr": [2,7,11,15], "target": 9, "left": 0, "right": 1, "sum": 9, "found": true },
+      "state": {
+        "arr": [2, 7, 11, 15],
+        "target": 9,
+        "left": 0,
+        "right": 1,
+        "sum": 9,
+        "found": true
+      },
       "explanation": "right=1 (value 7). sum=2+7=9. Found! Return [0,1]. Only 3 comparisons for n=4."
     }
   ],

@@ -24,10 +24,7 @@ export default function AlgorithmCard({ topic }: { topic: AlgorithmTopic }) {
       <p className="text-gray-600 text-sm leading-relaxed mb-3">{topic.summary}</p>
       <div className="flex flex-wrap gap-1">
         {topic.tags.map((tag) => (
-          <span
-            key={tag}
-            className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
-          >
+          <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
             {tag}
           </span>
         ))}

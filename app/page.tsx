@@ -5,12 +5,10 @@ export default function Home() {
     <div className="max-w-4xl mx-auto px-4 py-16">
       {/* Hero */}
       <section className="text-center mb-20">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">
-          Frontend Algo Lab
-        </h1>
+        <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">Frontend Algo Lab</h1>
         <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto mb-8">
-          Algorithm concepts explained through the lens of frontend engineering.
-          Stop memorizing solutions. Start recognizing patterns.
+          Algorithm concepts explained through the lens of frontend engineering. Stop memorizing
+          solutions. Start recognizing patterns.
         </p>
         <Link
           href="/algorithms"
@@ -22,32 +20,30 @@ export default function Home() {
 
       {/* Philosophy */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">
-          How it works
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">How it works</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="text-3xl mb-3">📚</div>
             <h3 className="font-semibold text-gray-900 mb-2">Static Curriculum</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              10 core algorithms with deep dives into problem patterns, implementation,
-              and step-by-step visualization. Learn at your own pace.
+              10 core algorithms with deep dives into problem patterns, implementation, and
+              step-by-step visualization. Learn at your own pace.
             </p>
           </div>
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="text-3xl mb-3">⚡</div>
             <h3 className="font-semibold text-gray-900 mb-2">Frontend Scenarios</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Every algorithm is grounded in real frontend use cases — virtual lists,
-              state normalization, event pipelines, and more.
+              Every algorithm is grounded in real frontend use cases — virtual lists, state
+              normalization, event pipelines, and more.
             </p>
           </div>
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="text-3xl mb-3">🤖</div>
             <h3 className="font-semibold text-gray-900 mb-2">AI Tutor</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Each topic has a built-in AI tutor. Ask questions, get explanations
-              tailored to your level, and explore edge cases interactively.
+              Each topic has a built-in AI tutor. Ask questions, get explanations tailored to your
+              level, and explore edge cases interactively.
             </p>
           </div>
         </div>

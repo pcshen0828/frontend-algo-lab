@@ -15,8 +15,7 @@ function PracticeCard({
 }) {
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
-  const reveal = (key: string) =>
-    setRevealed((prev) => new Set([...prev, key]));
+  const reveal = (key: string) => setRevealed((prev) => new Set([...prev, key]));
   const hide = (key: string) =>
     setRevealed((prev) => {
       const next = new Set(prev);
@@ -137,9 +136,7 @@ function PracticeCard({
       )}
       {solutionShown && (
         <div className="space-y-1">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            Solution
-          </p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Solution</p>
           <CodeBlock code={item.solution} language="typescript" />
         </div>
       )}

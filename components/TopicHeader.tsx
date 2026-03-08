@@ -20,10 +20,7 @@ export default function TopicHeader({ topic }: { topic: AlgorithmTopic }) {
       <p className="text-gray-600 text-lg leading-relaxed mb-4">{topic.summary}</p>
       <div className="flex flex-wrap gap-2">
         {topic.tags.map((tag) => (
-          <span
-            key={tag}
-            className="text-sm bg-gray-100 text-gray-600 px-3 py-1 rounded-full"
-          >
+          <span key={tag} className="text-sm bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
             {tag}
           </span>
         ))}
