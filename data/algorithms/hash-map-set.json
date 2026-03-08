@@ -25,7 +25,7 @@
     {
       "title": "Normalizing API Response Data",
       "description": "An API returns an array of user objects. Components need to look up users by ID frequently. Converting the array to a Map<id, User> makes every lookup O(1) instead of O(n).",
-      "example": "// Slow: users.find(u => u.id === id)  — O(n) every call\n// Fast:\nconst userMap = new Map(users.map(u => [u.id, u]));\nconst user = userMap.get(id); // O(1)"
+      "example": "interface User { id: string; name: string; avatar: string; }\n\n// Before: O(n) on every lookup\nfunction getUserSlow(users: User[], id: string): User | undefined {\n  return users.find(u => u.id === id);\n}\n\n// After: build once O(n), then O(1) per lookup\nfunction buildUserMap(users: User[]): Map<string, User> {\n  return new Map(users.map(u => [u.id, u]));\n}\n\nconst userMap = buildUserMap(apiResponse.users);\nconst user = userMap.get(id); // O(1)"
     },
     {
       "title": "Deduplicating Tag Lists",
@@ -38,7 +38,7 @@
       "example": "interface EntityState<T> {\n  ids: string[];\n  entities: Record<string, T>;\n}\nfunction normalize<T extends {id:string}>(items: T[]): EntityState<T> {\n  return {\n    ids: items.map(i => i.id),\n    entities: Object.fromEntries(items.map(i => [i.id, i]))\n  };\n}"
     }
   ],
-  "dataThinking": "Arrays are good at ordered access (index) and appending. Maps are good at keyed access. The moment you find yourself calling .find() inside a render loop or in a hot code path, normalize to a Map first. In React, this pattern often appears in useMemo: const itemMap = useMemo(() => new Map(items.map(i => [i.id, i])), [items]).",
+  "dataThinking": "Arrays are good at ordered access (index) and appending. Maps are good at keyed access. The moment you find yourself calling .find() inside a render loop or in a hot code path, normalize to a Map first. In React, this pattern often appears in useMemo to avoid rebuilding on every render:\n\nconst itemMap = useMemo(\n  () => new Map(items.map(i => [i.id, i])),\n  [items] // only rebuilds when items reference changes\n);",
   "naiveApproach": {
     "description": "Store data in an array; use .find() or .includes() for lookups. Simple to write, but O(n) per lookup.",
     "complexity": "O(n) lookup, O(1) insertion"

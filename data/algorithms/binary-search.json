@@ -24,12 +24,12 @@
     {
       "title": "Infinite Scroll Position Restore",
       "description": "A virtualized list renders thousands of items. When restoring scroll state, you need to find which rendered 'chunk' contains a given scroll offset. Each chunk has a known cumulative height.",
-      "example": "chunks = [{start:0,end:200},{start:200,end:450},{start:450,end:900}]\nfindChunkAtOffset(chunks, 350) // returns index 1"
+      "example": "interface Chunk { start: number; end: number; }\n\nfunction findChunkAtOffset(chunks: Chunk[], offset: number): number {\n  let left = 0;\n  let right = chunks.length - 1;\n\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (offset < chunks[mid].start) right = mid - 1;\n    else if (offset >= chunks[mid].end) left = mid + 1;\n    else return mid;\n  }\n\n  return -1; // offset outside all chunks\n}\n\n// findChunkAtOffset([{start:0,end:200},{start:200,end:450},{start:450,end:900}], 350)\n// => 1  (offset 350 falls in chunk[1]: 200–450)"
     },
     {
       "title": "Timeline Event Lookup",
-      "description": "A video timeline has events at sorted timestamps. Given a playhead position, find the active event efficiently without scanning all events.",
-      "example": "events = [{time:0},{time:5.2},{time:12.8},{time:30}]\nfindActiveEvent(events, 8.5) // returns event at 5.2"
+      "description": "A video timeline has events at sorted timestamps. Given a playhead position, find the active event (the last event whose time is <= the current time) without scanning all events.",
+      "example": "interface TimelineEvent { time: number; label: string; }\n\nfunction findActiveEvent(\n  events: TimelineEvent[],\n  currentTime: number\n): TimelineEvent | null {\n  let left = 0;\n  let right = events.length - 1;\n  let result: TimelineEvent | null = null;\n\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (events[mid].time <= currentTime) {\n      result = events[mid]; // candidate — keep searching right\n      left = mid + 1;\n    } else {\n      right = mid - 1;\n    }\n  }\n\n  return result;\n}\n\n// findActiveEvent([{time:0,label:'Intro'},{time:5.2,label:'Chapter 1'},{time:12.8,label:'Chapter 2'}], 8.5)\n// => { time: 5.2, label: 'Chapter 1' }"
     },
     {
       "title": "Design Token Range Picker",
