@@ -76,7 +76,7 @@ export default function TopicSidebar() {
   }
 
   return (
-    <nav className="sticky top-20 w-52 shrink-0">
+    <nav className="hidden lg:block sticky top-20 w-52 shrink-0">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
         On this page
       </p>
