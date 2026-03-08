@@ -31,7 +31,7 @@ export default function TopicSidebar() {
           <li key={s.id}>
             <button
               onClick={() => scrollTo(s.id)}
-              className="w-full text-left text-sm text-gray-600 hover:text-blue-600 py-1 px-2 rounded hover:bg-blue-50 transition-colors"
+              className="w-full text-left text-sm text-gray-600 hover:text-blue-600 py-1 px-2 rounded hover:bg-blue-50 cursor-pointer transition-colors"
             >
               {s.label}
             </button>
