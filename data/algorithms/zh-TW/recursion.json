@@ -1,43 +1,43 @@
 {
   "slug": "recursion",
-  "title": "Recursion",
+  "title": "遞迴 (Recursion)",
   "difficulty": "medium",
   "tags": ["recursion", "divide-and-conquer", "base-case", "call-stack"],
-  "summary": "Solve problems by having functions call themselves on smaller subproblems, naturally expressing hierarchical and self-similar structures.",
-  "overview": "Recursion reduces a problem to a base case plus recursive calls on smaller inputs. It's the natural fit for trees, nested data, and divide-and-conquer algorithms. In React, components are recursive by nature — a component can render instances of itself for nested data.",
-  "coreConcept": "Every recursive function needs: (1) a base case that stops the recursion, and (2) a recursive case that makes progress toward the base case. The call stack implicitly stores state at each level. Tail recursion is a special form where the recursive call is the last operation, enabling potential optimization.",
+  "summary": "透過函式對更小的子問題呼叫自身來解決問題，自然地表達階層式和自相似的結構。",
+  "overview": "遞迴將問題化簡為基本情況加上對更小輸入的遞迴呼叫。它是樹、巢狀資料和分治演算法的天然解法。在 React 中，元件本質上是遞迴的——一個元件可以為巢狀資料渲染自身的實例。",
+  "coreConcept": "每個遞迴函式需要：(1) 停止遞迴的基本情況，以及 (2) 向基本情況推進的遞迴情況。呼叫堆疊在每個層級隱式地儲存狀態。尾遞迴是一種特殊形式，遞迴呼叫是最後一個操作，可能實現最佳化。",
   "problemPatterns": [
-    "Tree/graph traversal",
-    "Divide and conquer (merge sort, quick sort)",
-    "Generating permutations / combinations",
-    "Nested data transformation",
-    "Backtracking"
+    "樹/圖的遍歷",
+    "分治法（merge sort、quick sort）",
+    "產生排列/組合",
+    "巢狀資料轉換",
+    "回溯法"
   ],
   "signals": [
-    "Problem can be broken into identical subproblems",
-    "Data is self-similar (trees, nested objects)",
-    "Problem has 'all possibilities' or 'all paths' flavor",
-    "Natural inductive structure"
+    "問題可以分解為相同的子問題",
+    "資料是自相似的（樹、巢狀物件）",
+    "問題有「所有可能性」或「所有路徑」的特性",
+    "自然的歸納結構"
   ],
   "frontendScenarios": [
     {
-      "title": "Recursive React Components",
-      "description": "Nested menus, comment threads, and folder trees render naturally with recursive components. The component renders itself for each child, with depth tracking for indentation.",
+      "title": "遞迴式 React 元件",
+      "description": "巢狀選單、留言串和資料夾樹可以用遞迴元件自然地渲染。元件為每個子節點渲染自身，並追蹤深度以控制縮排。",
       "example": "interface MenuItem { label: string; children?: MenuItem[]; }\nfunction Menu({ items, depth = 0 }: { items: MenuItem[]; depth?: number }) {\n  return (\n    <ul style={{ paddingLeft: depth * 16 }}>\n      {items.map(item => (\n        <li key={item.label}>\n          {item.label}\n          {item.children && <Menu items={item.children} depth={depth + 1} />}\n        </li>\n      ))}\n    </ul>\n  );\n}"
     },
     {
-      "title": "Deep Object Transform",
-      "description": "API responses often have camelCase keys needing conversion to snake_case (or vice versa) throughout deeply nested structures. Recursion handles arbitrary depth naturally.",
+      "title": "深層物件轉換",
+      "description": "API 回應的 key 常常需要在深層巢狀結構中從 camelCase 轉換為 snake_case（或反之）。遞迴可以自然地處理任意深度。",
       "example": "function toCamelCase(obj: unknown): unknown {\n  if (Array.isArray(obj)) return obj.map(toCamelCase);\n  if (obj && typeof obj === 'object') {\n    return Object.fromEntries(\n      Object.entries(obj as Record<string,unknown>).map(([k,v]) => [\n        k.replace(/_([a-z])/g, (_,c) => c.toUpperCase()),\n        toCamelCase(v)\n      ])\n    );\n  }\n  return obj;\n}"
     }
   ],
-  "dataThinking": "Think of recursion as delegating subproblems to a future version of yourself that has already solved them. Your job is: handle the base case, assume the recursive call works, and combine results. This inductive thinking is the core skill. In React, useEffect cleanup, context propagation, and error boundaries all exhibit recursive or tree-shaped behavior.",
+  "dataThinking": "將遞迴想像成將子問題委派給已解決它們的未來版本的你。你的工作是：處理基本情況，假設遞迴呼叫有效，並合併結果。這種歸納思維是核心技能。在 React 中，useEffect 清理、context 傳播和錯誤邊界都表現出遞迴或樹狀行為。",
   "naiveApproach": {
-    "description": "Iterative approach with explicit data structures (stack for DFS, queue for BFS). More verbose but avoids stack overflow.",
+    "description": "帶顯式資料結構的迭代方法（DFS 用堆疊，BFS 用佇列）。程式碼較冗長但避免堆疊溢位。",
     "complexity": "O(n) time, O(n) space"
   },
   "betterApproach": {
-    "description": "Recursive solution is often cleaner and more readable. Use tail recursion or memoization to optimize. For very deep inputs, convert to iterative with explicit stack.",
+    "description": "遞迴解法通常更簡潔易讀。使用尾遞迴或記憶化來最佳化。對非常深的輸入，轉換為帶顯式堆疊的迭代式。",
     "complexity": "O(n) time, O(h) space on call stack"
   },
   "implementation": {
@@ -46,50 +46,50 @@
   },
   "visualizationSteps": [
     {
-      "label": "factorial(4) call",
+      "label": "呼叫 factorial(4)",
       "state": { "call": "factorial(4)", "stack": ["factorial(4)"], "result": null },
-      "explanation": "factorial(4) = 4 * factorial(3). Pushes factorial(3) onto call stack."
+      "explanation": "factorial(4) = 4 * factorial(3)。將 factorial(3) push 到呼叫堆疊。"
     },
     {
-      "label": "Unwinding to base case",
+      "label": "展開至基本情況",
       "state": {
         "stack": ["factorial(4)", "factorial(3)", "factorial(2)", "factorial(1)"],
         "baseCase": "factorial(1) = 1"
       },
-      "explanation": "Stack builds up until base case factorial(1)=1. Now we start returning."
+      "explanation": "堆疊持續累積直到基本情況 factorial(1)=1。現在開始回傳。"
     },
     {
-      "label": "Returns propagate up",
+      "label": "回傳值向上傳遞",
       "state": {
         "returns": { "factorial(1)": 1, "factorial(2)": 2, "factorial(3)": 6, "factorial(4)": 24 }
       },
-      "explanation": "Each frame multiplies: 1→2→6→24. The call stack unwinds, combining results bottom-up."
+      "explanation": "每個 frame 依次相乘：1→2→6→24。呼叫堆疊展開，從底部向上合併結果。"
     }
   ],
   "practiceItems": [
     {
       "id": "rec-1",
-      "title": "Deep Key Transform",
-      "question": "Write a function deepTransformKeys(obj, transform) that applies a transform function to every key in a deeply nested object/array structure. Useful for normalizing API responses.",
-      "hint1": "Handle four cases: null/primitive (return as-is), array (map recursively), object (transform each key and recurse on value).",
-      "hint2": "Use typeof checks and Array.isArray() to distinguish cases. Object.entries + Object.fromEntries for transformation.",
+      "title": "深層 key 轉換",
+      "question": "寫一個函式 deepTransformKeys(obj, transform)，將 transform 函式應用於深層巢狀 object/array 結構中的每個 key。適合正規化 API 回應。",
+      "hint1": "處理四種情況：null/基本型別（直接回傳）、陣列（遞迴 map）、物件（轉換每個 key 並對值遞迴）。",
+      "hint2": "使用 typeof 檢查和 Array.isArray() 來區分情況。用 Object.entries + Object.fromEntries 進行轉換。",
       "solution": "function deepTransformKeys(obj: unknown, transform: (key: string) => string): unknown {\n  if (obj === null || typeof obj !== 'object') return obj;\n  if (Array.isArray(obj)) return obj.map(v => deepTransformKeys(v, transform));\n  return Object.fromEntries(\n    Object.entries(obj as Record<string,unknown>).map(([k, v]) => [\n      transform(k),\n      deepTransformKeys(v, transform)\n    ])\n  );\n}",
       "type": "engineering"
     },
     {
       "id": "rec-2",
-      "title": "Generate All Permutations",
-      "question": "Generate all permutations of an array. This models generating all possible orderings — useful in testing, configuration generators, or UI 'all combinations' previews.",
-      "hint1": "For each element, fix it as the first, then recursively permute the rest. Concatenate.",
-      "hint2": "Base case: array of length 0 or 1 has exactly one permutation (itself).",
+      "title": "產生所有排列",
+      "question": "產生一個陣列的所有排列。這模擬了產生所有可能排序——在測試、設定產生器或 UI「所有組合」預覽中很有用。",
+      "hint1": "對每個元素，固定它為第一個，然後遞迴地排列其餘元素。串接結果。",
+      "hint2": "基本情況：長度為 0 或 1 的陣列只有一種排列（本身）。",
       "solution": "function permutations<T>(arr: T[]): T[][] {\n  if (arr.length <= 1) return [arr];\n  const result: T[][] = [];\n  for (let i = 0; i < arr.length; i++) {\n    const rest = [...arr.slice(0, i), ...arr.slice(i + 1)];\n    for (const perm of permutations(rest)) {\n      result.push([arr[i], ...perm]);\n    }\n  }\n  return result;\n}",
       "type": "pattern"
     }
   ],
   "reflectionPrompts": [
-    "What is the maximum safe recursion depth in JavaScript, and how would you handle deeply nested data that exceeds it?",
-    "How does React's own reconciliation algorithm use recursive-like traversal? What optimizations does it make?",
-    "Tail call optimization: what is it, does JavaScript support it, and when does it matter?",
-    "When is an iterative solution strictly better than a recursive one, even if recursion is cleaner?"
+    "JavaScript 中的最大安全遞迴深度是多少？你如何處理超過它的深層巢狀資料？",
+    "React 自身的調和演算法如何使用遞迴式的遍歷？它做了哪些最佳化？",
+    "尾呼叫最佳化（tail call optimization）是什麼？JavaScript 支援它嗎？什麼時候重要？",
+    "什麼情況下迭代式解法嚴格優於遞迴式解法，即使遞迴更簡潔？"
   ]
 }

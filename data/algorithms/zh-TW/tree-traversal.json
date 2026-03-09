@@ -1,50 +1,50 @@
 {
   "slug": "tree-traversal",
-  "title": "Tree Traversal",
+  "title": "樹狀遍歷 (Tree Traversal)",
   "difficulty": "medium",
   "tags": ["trees", "recursion", "DFS", "BFS", "nested-data"],
-  "summary": "Navigate hierarchical data structures — from DOM trees to nested menus — using depth-first or breadth-first strategies.",
-  "overview": "Tree traversal visits every node in a tree exactly once. Depth-first search (DFS) goes deep before wide: pre-order, in-order, post-order variants each have distinct uses. Breadth-first search (BFS) visits level by level using a queue. Frontend engineers encounter trees constantly: the DOM, component trees, file systems, comment threads, navigation menus.",
-  "coreConcept": "A tree node has a value and zero or more children. DFS uses the call stack (or explicit stack) to go deep; BFS uses a queue to go wide. Pre-order (visit before children) is natural for rendering. Post-order (visit after children) is natural for cleanup. In-order (left, node, right) is specific to binary search trees and gives sorted output.",
+  "summary": "使用深度優先或廣度優先策略，遍歷階層式資料結構——從 DOM 樹到巢狀選單。",
+  "overview": "樹狀遍歷恰好訪問樹中的每個節點一次。深度優先搜尋（DFS）先深後廣：前序、中序、後序各有不同用途。廣度優先搜尋（BFS）使用佇列逐層訪問。前端工程師無時不刻都在與樹打交道：DOM、元件樹、檔案系統、留言串、導航選單。",
+  "coreConcept": "樹節點有一個值和零或多個子節點。DFS 使用呼叫堆疊（或顯式堆疊）深入探索；BFS 使用佇列廣泛探索。前序（訪問前先處理節點）自然適合渲染。後序（訪問後再處理節點）自然適合清理。中序（左、節點、右）專屬於二元搜尋樹，可輸出排序結果。",
   "problemPatterns": [
-    "Find a node by value or condition",
-    "Compute depth / height of a tree",
-    "Flatten nested structure to array",
-    "Transform every node (map over tree)",
-    "Aggregate values bottom-up (reduce over tree)",
-    "Find path from root to a node"
+    "依值或條件找到節點",
+    "計算樹的深度/高度",
+    "將巢狀結構展平為陣列",
+    "轉換每個節點（對樹做 map）",
+    "自底向上聚合值（對樹做 reduce）",
+    "找從根到某節點的路徑"
   ],
   "signals": [
-    "Data is nested or hierarchical",
-    "You need to visit every node",
-    "Components render children recursively",
-    "Depth or level information matters",
-    "You're building breadcrumbs or ancestry paths"
+    "資料是巢狀或階層式的",
+    "需要訪問每個節點",
+    "元件遞迴地渲染子節點",
+    "深度或層級資訊很重要",
+    "你正在建立麵包屑或祖先路徑"
   ],
   "frontendScenarios": [
     {
-      "title": "Nested Comment Thread Rendering",
-      "description": "Reddit-style comments have replies that have replies. The data is a tree. Rendering requires DFS pre-order: render a comment, then recursively render its replies, indented one level deeper.",
+      "title": "巢狀留言串渲染",
+      "description": "Reddit 風格的留言有回覆，回覆又有回覆。資料是一棵樹。渲染需要 DFS 前序：渲染一個留言，然後遞迴地渲染其回覆，縮排一個層級。",
       "example": "interface Comment { id: string; text: string; replies: Comment[]; }\nfunction CommentTree({ comment, depth = 0 }: { comment: Comment; depth?: number }) {\n  return (\n    <div style={{ paddingLeft: depth * 16 }}>\n      <p>{comment.text}</p>\n      {comment.replies.map(r => <CommentTree key={r.id} comment={r} depth={depth + 1} />)}\n    </div>\n  );\n}"
     },
     {
-      "title": "File System Explorer",
-      "description": "A folder tree needs expand/collapse. BFS is useful for loading level by level (lazy loading). DFS is useful for building the full path to a file or finding all files matching a pattern.",
+      "title": "檔案系統瀏覽器",
+      "description": "資料夾樹需要展開/收合。BFS 適合逐層載入（懶加載）。DFS 適合建立到某個檔案的完整路徑，或找到所有符合模式的檔案。",
       "example": "interface FsNode { name: string; type: 'file'|'folder'; children?: FsNode[]; }\nfunction findFiles(node: FsNode, ext: string, path = ''): string[] {\n  const fullPath = path + '/' + node.name;\n  if (node.type === 'file') return fullPath.endsWith(ext) ? [fullPath] : [];\n  return (node.children ?? []).flatMap(child => findFiles(child, ext, fullPath));\n}"
     },
     {
-      "title": "Navigation Menu Active State",
-      "description": "A multi-level nav menu needs to highlight the active path. Given the current route, traverse the menu tree to find which items are ancestors of the active item.",
+      "title": "導航選單的啟用狀態",
+      "description": "多層導航選單需要高亮顯示當前路徑。給定當前路由，遍歷選單樹以找出哪些項目是啟用項目的祖先。",
       "example": "function findActivePath(items: NavItem[], target: string, path: NavItem[] = []): NavItem[] | null {\n  for (const item of items) {\n    const current = [...path, item];\n    if (item.href === target) return current;\n    if (item.children) {\n      const found = findActivePath(item.children, target, current);\n      if (found) return found;\n    }\n  }\n  return null;\n}"
     }
   ],
-  "dataThinking": "Think of tree traversal as a controlled visit schedule. The shape of your visit order encodes what information you have available at each step. Pre-order: you know the parent before children (useful for passing props down). Post-order: you know all children's results before computing parent (useful for aggregation). BFS: you know everyone at depth d before depth d+1 (useful for level-based operations).",
+  "dataThinking": "將樹狀遍歷想像成一個受控的訪問排程。你的訪問順序形狀決定了你在每個步驟能獲得什麼資訊。前序：你在子節點之前就知道父節點（適合向下傳遞 props）。後序：你在計算父節點前就知道所有子節點的結果（適合聚合）。BFS：你在深度 d+1 前就知道深度 d 的所有節點（適合基於層級的操作）。",
   "naiveApproach": {
-    "description": "Ad-hoc recursion without clear traversal strategy. Often results in incorrect visit order or stack overflows on deep trees.",
+    "description": "沒有清晰遍歷策略的臨時遞迴。常導致不正確的訪問順序或在深樹上堆疊溢位。",
     "complexity": "O(n) time but error-prone"
   },
   "betterApproach": {
-    "description": "Choose traversal strategy intentionally. Use recursive DFS for most tree problems (clean code, natural for trees). Use iterative DFS (explicit stack) to avoid stack overflow on very deep trees. Use BFS (queue) for level-order needs.",
+    "description": "有意識地選擇遍歷策略。大多數樹問題使用遞迴 DFS（程式碼簡潔，自然適合樹）。在非常深的樹上使用迭代式 DFS（顯式堆疊）避免堆疊溢位。層序需求使用 BFS（佇列）。",
     "complexity": "O(n) time, O(h) space for DFS (h=height), O(w) space for BFS (w=max width)"
   },
   "implementation": {
@@ -53,7 +53,7 @@
   },
   "visualizationSteps": [
     {
-      "label": "Set up — push root A onto stack",
+      "label": "設定——將根節點 A push 到堆疊",
       "state": {
         "nodes": ["A", "B", "C", "D", "E", "F"],
         "edges": ["A→B", "A→C", "B→D", "B→E", "C→F"],
@@ -62,62 +62,62 @@
         "stack": ["A"],
         "current": null
       },
-      "explanation": "Tree: A has children B, C. B has children D, E. C has child F. We use an explicit stack for iterative DFS. Start by pushing root A."
+      "explanation": "樹：A 有子節點 B、C。B 有子節點 D、E。C 有子節點 F。我們使用顯式堆疊進行迭代式 DFS。從 push 根節點 A 開始。"
     },
     {
-      "label": "Pop A → visit A, push children C then B",
+      "label": "Pop A → 訪問 A，push 子節點 C 再 B",
       "state": { "visited": ["A"], "stack": ["C", "B"], "current": "B" },
-      "explanation": "Visit A first (pre-order: node before children). Push children right-to-left so left child B sits on top. Next pop: B."
+      "explanation": "先訪問 A（前序：節點在子節點之前）。從右到左 push 子節點，使左子節點 B 在頂部。下一個 pop：B。"
     },
     {
-      "label": "Pop B → visit B, push E then D; pop D, pop E",
+      "label": "Pop B → 訪問 B，push E 再 D；pop D，pop E",
       "state": { "visited": ["A", "B", "D", "E"], "stack": ["C"], "current": "C" },
-      "explanation": "Visit B, push E then D. Pop D (leaf — no children to push), visit D. Pop E (leaf), visit E. B's entire subtree is done."
+      "explanation": "訪問 B，push E 再 D。Pop D（葉節點——無子節點可 push），訪問 D。Pop E（葉節點），訪問 E。B 的整個子樹完成。"
     },
     {
-      "label": "Pop C → visit C, push F; pop F — traversal complete",
+      "label": "Pop C → 訪問 C，push F；pop F——遍歷完成",
       "state": {
         "visited": ["A", "B", "D", "E", "C", "F"],
         "stack": [],
         "current": null,
         "complete": true
       },
-      "explanation": "Pop C, visit it, push F. Pop F (leaf), visit F. Stack is empty — traversal complete. Pre-order result: A B D E C F."
+      "explanation": "Pop C，訪問它，push F。Pop F（葉節點），訪問 F。堆疊為空——遍歷完成。前序結果：A B D E C F。"
     }
   ],
   "practiceItems": [
     {
       "id": "tt-1",
-      "title": "Maximum Depth of Nested Menu",
-      "question": "Given a navigation tree where each item may have children, find the maximum nesting depth. This tells you how deep the deepest submenu goes — useful for dynamic indent calculations.",
-      "hint1": "Post-order recursion: compute depth of each child, take the max, add 1 for current node.",
-      "hint2": "Base case: a leaf node (no children) has depth 1.",
+      "title": "巢狀選單的最大深度",
+      "question": "給定一個導航樹，每個項目可能有子節點，找出最大巢狀深度。這告訴你最深的子選單有多深——對動態縮排計算很有用。",
+      "hint1": "後序遞迴：計算每個子節點的深度，取最大值，再加 1 代表當前節點。",
+      "hint2": "基本情況：葉節點（無子節點）的深度為 1。",
       "solution": "interface NavItem { label: string; children?: NavItem[]; }\nfunction maxDepth(item: NavItem): number {\n  if (!item.children || item.children.length === 0) return 1;\n  return 1 + Math.max(...item.children.map(maxDepth));\n}",
       "type": "pattern"
     },
     {
       "id": "tt-2",
-      "title": "Flatten Nested Category Tree",
-      "question": "An e-commerce API returns categories as a tree. You need a flat sorted list for a dropdown select. Each item should show its full path (e.g. 'Electronics > Phones > Android').",
-      "hint1": "DFS pre-order, passing the current path string down. When you reach any node, add its full path to the result.",
-      "hint2": "You can include both leaf and non-leaf nodes — each gets its accumulated path.",
+      "title": "展平巢狀分類樹",
+      "question": "一個電商 API 以樹狀結構回傳分類。你需要一個扁平的排序列表供下拉選單使用。每個項目應顯示完整路徑（例如「電子產品 > 手機 > Android」）。",
+      "hint1": "DFS 前序，將當前路徑字串向下傳遞。到達任何節點時，將其完整路徑加入結果。",
+      "hint2": "你可以包含葉節點和非葉節點——每個節點都有其累積路徑。",
       "solution": "interface Category { id: string; name: string; children?: Category[]; }\nfunction flattenCategories(cats: Category[], prefix = ''): Array<{id:string; label:string}> {\n  return cats.flatMap(cat => {\n    const label = prefix ? `${prefix} > ${cat.name}` : cat.name;\n    const self = { id: cat.id, label };\n    const children = cat.children ? flattenCategories(cat.children, label) : [];\n    return [self, ...children];\n  });\n}",
       "type": "engineering"
     },
     {
       "id": "tt-3",
-      "title": "Find Breadcrumb Path",
-      "question": "Given a page's URL slug and a site navigation tree, return the array of nav items from root to the matching item (the breadcrumb trail).",
-      "hint1": "DFS with path accumulation. Pass the current path down; return it when you find a match.",
-      "hint2": "Return null from each branch that doesn't contain the target. Bubble up the successful path.",
+      "title": "找到麵包屑路徑",
+      "question": "給定頁面的 URL slug 和網站導航樹，回傳從根到匹配項目的導航項目陣列（麵包屑路徑）。",
+      "hint1": "帶路徑累積的 DFS。向下傳遞當前路徑；找到匹配時回傳它。",
+      "hint2": "從不包含目標的每個分支回傳 null。將成功的路徑向上傳遞。",
       "solution": "interface NavItem { label: string; href?: string; children?: NavItem[]; }\nfunction getBreadcrumb(items: NavItem[], slug: string, path: NavItem[] = []): NavItem[] | null {\n  for (const item of items) {\n    const current = [...path, item];\n    if (item.href === slug) return current;\n    if (item.children) {\n      const result = getBreadcrumb(item.children, slug, current);\n      if (result) return result;\n    }\n  }\n  return null;\n}",
       "type": "engineering"
     }
   ],
   "reflectionPrompts": [
-    "When would you choose BFS over DFS for a frontend problem? Give a concrete example.",
-    "React's component tree is traversed during reconciliation. How does React's algorithm relate to tree traversal concepts?",
-    "What are the risks of deep recursion in JavaScript, and how would you convert a recursive DFS to an iterative one?",
-    "How does post-order traversal map to React's useEffect cleanup ordering?"
+    "在什麼情況下你會為前端問題選擇 BFS 而非 DFS？給一個具體的例子。",
+    "React 的元件樹在調和（reconciliation）過程中被遍歷。React 的演算法與樹狀遍歷概念有何關聯？",
+    "JavaScript 中深層遞迴的風險是什麼？你如何將遞迴式 DFS 轉換為迭代式？",
+    "後序遍歷如何對應到 React 的 useEffect 清理（cleanup）執行順序？"
   ]
 }

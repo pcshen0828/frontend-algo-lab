@@ -1,45 +1,45 @@
 {
   "slug": "two-pointers",
-  "title": "Two Pointers",
+  "title": "雙指標 (Two Pointers)",
   "difficulty": "easy",
   "tags": ["arrays", "sorting", "optimization", "in-place"],
-  "summary": "Use two indices moving toward each other or in tandem to solve array problems in O(n) instead of O(n²).",
-  "overview": "The two-pointer technique places pointers at strategic positions (often both ends of a sorted array, or one slow and one fast). By moving them based on conditions, you avoid nested loops. It works when the sorted order gives you information that lets you make greedy directional decisions.",
-  "coreConcept": "Two pointers work because sorted order creates a monotonic relationship: moving left pointer right increases the sum; moving right pointer left decreases it. When you need a sum = target, if current sum is too small, advance left; too big, retreat right. This eliminates entire rows/columns of the search space per step.",
+  "summary": "使用兩個索引相向移動或同向移動，將陣列問題的時間複雜度從 O(n²) 降低到 O(n)。",
+  "overview": "雙指標技巧將指標放在策略性位置（通常是已排序陣列的兩端，或一慢一快）。透過根據條件移動指標，避免巢狀迴圈。當排序提供的資訊讓你能做出貪婪的方向性決策時，這個技巧最有效。",
+  "coreConcept": "雙指標能運作，是因為排序建立了單調關係：left 指標右移會增加總和；right 指標左移會減少總和。當需要總和等於目標時，若當前總和太小則前進 left；太大則後退 right。這讓每一步都能消除搜尋空間的整行或整列。",
   "problemPatterns": [
-    "Two Sum on sorted array",
+    "已排序陣列的 Two Sum",
     "Three Sum / k-Sum",
-    "Remove duplicates in-place",
-    "Container with most water",
-    "Palindrome detection",
-    "Merge two sorted arrays"
+    "原地移除重複元素",
+    "裝最多水的容器",
+    "回文偵測",
+    "合併兩個已排序陣列"
   ],
   "signals": [
-    "Sorted array + pair/triple search",
-    "In-place modification of array",
-    "Range selection (start/end)",
-    "Detecting conflicts in time intervals",
-    "Comparing sequences from both ends"
+    "已排序陣列 + 配對/三元組搜尋",
+    "原地修改陣列",
+    "範圍選取（起始/結束）",
+    "偵測時間區間的衝突",
+    "從兩端比較序列"
   ],
   "frontendScenarios": [
     {
-      "title": "Date Range Conflict Detection",
-      "description": "A calendar has sorted time slots. Check if any two bookings overlap. Sort by start time, then use two pointers to check adjacent pairs — if slot[i].end > slot[i+1].start, they conflict.",
+      "title": "日期範圍衝突偵測",
+      "description": "行事曆有排序好的時間段。檢查是否有任何兩個預約重疊。依開始時間排序後，用雙指標檢查相鄰配對——若 slot[i].end > slot[i+1].start，則它們衝突。",
       "example": "function hasConflict(slots: {start:number;end:number}[]): boolean {\n  const sorted = [...slots].sort((a,b) => a.start - b.start);\n  for (let i = 0; i < sorted.length - 1; i++) {\n    if (sorted[i].end > sorted[i+1].start) return true;\n  }\n  return false;\n}"
     },
     {
-      "title": "Merge Two Sorted Data Streams",
-      "description": "Two paginated APIs return sorted results. Merge them into a single sorted list for display. Classic merge step from merge sort, using two pointers advancing through each array.",
+      "title": "合併兩個已排序的資料串流",
+      "description": "兩個分頁 API 回傳排序好的結果。將它們合併成單一的排序列表以供顯示。這是 merge sort 的經典合併步驟，使用兩個指標分別遍歷各陣列。",
       "example": "function mergeSorted<T>(a: T[], b: T[], cmp: (x:T,y:T)=>number): T[] {\n  const result: T[] = [];\n  let i = 0, j = 0;\n  while (i < a.length && j < b.length) {\n    result.push(cmp(a[i], b[j]) <= 0 ? a[i++] : b[j++]);\n  }\n  return result.concat(a.slice(i), b.slice(j));\n}"
     }
   ],
-  "dataThinking": "Two pointers are a spatial reasoning trick. Imagine the search space as a 2D grid: one axis is the left pointer, one is the right. You're finding cells satisfying a condition. Sorted order means the grid is monotonic — moving along one axis monotonically changes the value. This lets you prune entire rows/columns per step, reducing O(n²) to O(n).",
+  "dataThinking": "雙指標是一種空間推理技巧。想像搜尋空間是一個 2D 格狀圖：一個軸是 left 指標，另一個是 right。你在尋找滿足條件的格子。排序意味著格狀圖是單調的——沿一個軸移動會單調地改變值。這讓每步都能修剪整行或整列，將 O(n²) 降低至 O(n)。",
   "naiveApproach": {
-    "description": "Nested loops: for each i, check all j > i. O(n²) comparisons.",
+    "description": "巢狀迴圈：對每個 i，檢查所有 j > i。O(n²) 次比較。",
     "complexity": "O(n²) time, O(1) space"
   },
   "betterApproach": {
-    "description": "Sort first (if not sorted). Place left=0, right=n-1. Move pointers inward based on comparison with target.",
+    "description": "先排序（若尚未排序）。設定 left=0，right=n-1。根據與目標的比較向內移動指標。",
     "complexity": "O(n log n) for sort + O(n) scan = O(n log n) total"
   },
   "implementation": {
@@ -48,17 +48,17 @@
   },
   "visualizationSteps": [
     {
-      "label": "Two Sum: sorted=[2,7,11,15], target=9",
+      "label": "Two Sum：sorted=[2,7,11,15]，target=9",
       "state": { "arr": [2, 7, 11, 15], "target": 9, "left": 0, "right": 3, "sum": 17 },
-      "explanation": "left=0 (value 2), right=3 (value 15). sum=17 > 9, so move right pointer left."
+      "explanation": "left=0（值為 2），right=3（值為 15）。sum=17 > 9，將 right 指標左移。"
     },
     {
-      "label": "sum=13, still too big",
+      "label": "sum=13，仍然太大",
       "state": { "arr": [2, 7, 11, 15], "target": 9, "left": 0, "right": 2, "sum": 13 },
-      "explanation": "right=2 (value 11). sum=13 > 9. Move right left again."
+      "explanation": "right=2（值為 11）。sum=13 > 9。再次將 right 左移。"
     },
     {
-      "label": "sum=9, found!",
+      "label": "sum=9，找到了！",
       "state": {
         "arr": [2, 7, 11, 15],
         "target": 9,
@@ -67,33 +67,33 @@
         "sum": 9,
         "found": true
       },
-      "explanation": "right=1 (value 7). sum=2+7=9. Found! Return [0,1]. Only 3 comparisons for n=4."
+      "explanation": "right=1（值為 7）。sum=2+7=9。找到了！回傳 [0,1]。n=4 時只需 3 次比較。"
     }
   ],
   "practiceItems": [
     {
       "id": "tp-1",
       "title": "Three Sum",
-      "question": "Find all unique triplets in an array that sum to zero. This appears in collision detection and constraint satisfaction.",
-      "hint1": "Sort first. Fix one element, then use two pointers on the remaining subarray.",
-      "hint2": "Skip duplicate values for both the fixed element and the two pointers to avoid duplicate triplets.",
+      "question": "找出陣列中所有總和為零的唯一三元組。這在碰撞偵測和約束滿足問題中很常見。",
+      "hint1": "先排序。固定一個元素，再對剩餘子陣列使用雙指標。",
+      "hint2": "對固定元素和兩個指標都跳過重複值，避免輸出重複的三元組。",
       "solution": "function threeSum(nums: number[]): number[][] {\n  nums.sort((a,b) => a-b);\n  const result: number[][] = [];\n  for (let i = 0; i < nums.length - 2; i++) {\n    if (i > 0 && nums[i] === nums[i-1]) continue;\n    let left = i+1, right = nums.length-1;\n    while (left < right) {\n      const sum = nums[i] + nums[left] + nums[right];\n      if (sum === 0) {\n        result.push([nums[i], nums[left], nums[right]]);\n        while (left < right && nums[left] === nums[left+1]) left++;\n        while (left < right && nums[right] === nums[right-1]) right--;\n        left++; right--;\n      } else if (sum < 0) left++;\n      else right--;\n    }\n  }\n  return result;\n}",
       "type": "pattern"
     },
     {
       "id": "tp-2",
-      "title": "Merge Two Sorted API Responses",
-      "question": "Two endpoints return sorted arrays of Event objects (sorted by timestamp). Merge them into a single sorted stream for display. This is common in activity feeds combining multiple data sources.",
-      "hint1": "Use two pointers, one per array. Always take the smaller of the two current elements.",
-      "hint2": "After the main loop, append any remaining items from either array.",
+      "title": "合併兩個已排序的 API 回應",
+      "question": "兩個端點回傳已依時間戳記排序的 Event 物件陣列。將它們合併成單一的排序串流以供顯示。這在合併多個資料來源的動態消息中很常見。",
+      "hint1": "使用兩個指標，每個陣列一個。始終取兩個當前元素中較小的那個。",
+      "hint2": "主迴圈結束後，將任一陣列中剩餘的項目追加到結果。",
       "solution": "interface Event { id: string; timestamp: number; type: string; }\nfunction mergeEventStreams(a: Event[], b: Event[]): Event[] {\n  const result: Event[] = [];\n  let i = 0, j = 0;\n  while (i < a.length && j < b.length) {\n    result.push(a[i].timestamp <= b[j].timestamp ? a[i++] : b[j++]);\n  }\n  return result.concat(a.slice(i), b.slice(j));\n}",
       "type": "engineering"
     }
   ],
   "reflectionPrompts": [
-    "Why must the array be sorted for the two-pointer technique to work on pair-sum problems?",
-    "The slow/fast pointer pattern (Floyd's cycle detection) is also called 'two pointers'. How is it different from the left/right variant?",
-    "How would you extend two-pointer pair sum to three-sum, and what is the resulting time complexity?",
-    "In the calendar conflict detection scenario, why does sorting by start time enable O(n) detection?"
+    "為什麼在配對求和問題中，雙指標技巧需要陣列已排序才能運作？",
+    "慢快指標模式（Floyd 循環偵測）也稱為「雙指標」。它與左右指標的變體有何不同？",
+    "如何將雙指標的配對求和延伸到三數之和？最終的時間複雜度是多少？",
+    "在行事曆衝突偵測場景中，為什麼依開始時間排序能實現 O(n) 的偵測？"
   ]
 }

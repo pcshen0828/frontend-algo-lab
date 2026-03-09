@@ -1,43 +1,43 @@
 {
   "slug": "sorting",
-  "title": "Sorting",
+  "title": "排序 (Sorting)",
   "difficulty": "easy",
   "tags": ["sorting", "comparison", "stability", "ranking"],
-  "summary": "Arrange data in a defined order — essential for table sorting, ranked feeds, and priority-based UI rendering.",
-  "overview": "Sorting algorithms order a collection by a comparator. JavaScript's Array.sort() is O(n log n) and uses a stable sort (TimSort). Understanding comparison functions, stable vs unstable sorts, and custom key extraction is more practically relevant for frontend engineers than implementing quicksort from scratch.",
-  "coreConcept": "A comparator function (a, b) => number returns negative (a before b), zero (equal), or positive (b before a). Stable sort preserves relative order of equal elements — critical for multi-key sorting. Custom key extraction (Schwartzian transform) avoids recomputing expensive keys on every comparison.",
+  "summary": "將資料依定義的順序排列——對於表格排序、排名動態消息和優先序 UI 渲染至關重要。",
+  "overview": "排序演算法依比較器對集合排序。JavaScript 的 Array.sort() 是 O(n log n) 且使用穩定排序（TimSort）。理解比較函式、穩定與不穩定排序，以及自訂 key 提取，對前端工程師而言比從頭實作 quicksort 更實際有用。",
+  "coreConcept": "比較器函式 (a, b) => number 回傳負數（a 在前）、零（相等）或正數（b 在前）。穩定排序保留相等元素的相對順序——對多 key 排序至關重要。自訂 key 提取（Schwartzian transform）避免在每次比較時重新計算昂貴的 key。",
   "problemPatterns": [
-    "Sort table by column (multi-key)",
-    "Rank items by score with tiebreakers",
-    "Sort objects by nested property",
-    "Custom stable sort with multiple criteria",
-    "Partial sort: top-k elements"
+    "依欄位排序表格（多 key）",
+    "依分數排名並有決勝機制",
+    "依巢狀屬性排序物件",
+    "多條件的自訂穩定排序",
+    "部分排序：前 k 個元素"
   ],
   "signals": [
-    "Data must be displayed in a user-defined order",
-    "Multiple sort keys with priority",
-    "Sort stability matters (preserve previous sort)",
-    "Performance is important for large lists"
+    "資料必須以使用者定義的順序顯示",
+    "多個排序 key 帶有優先順序",
+    "排序穩定性很重要（保留先前的排序）",
+    "大列表的效能很重要"
   ],
   "frontendScenarios": [
     {
-      "title": "Multi-Column Table Sorting",
-      "description": "A data table lets users sort by any column, with secondary sort preserving previous order. Stable sort makes this work: sort by secondary key first, then by primary key.",
+      "title": "多欄位表格排序",
+      "description": "資料表格讓使用者依任意欄位排序，次要排序保留先前的順序。穩定排序使這成為可能：先依次要 key 排序，再依主要 key 排序。",
       "example": "function multiSort<T>(items: T[], keys: Array<{key: keyof T, dir: 'asc'|'desc'}>): T[] {\n  return [...items].sort((a, b) => {\n    for (const {key, dir} of keys) {\n      const v = a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0;\n      if (v !== 0) return dir === 'asc' ? v : -v;\n    }\n    return 0;\n  });\n}"
     },
     {
-      "title": "Priority Feed Ranking",
-      "description": "A social feed sorts posts by: pinned first, then by engagement score descending, then by recency descending. Three-level comparator.",
+      "title": "優先序動態消息排名",
+      "description": "社群動態消息依以下規則排序：置頂貼文優先，然後依互動分數降序，再依發布時間降序。三層比較器。",
       "example": "posts.sort((a, b) => {\n  if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;\n  if (b.score !== a.score) return b.score - a.score;\n  return b.createdAt - a.createdAt;\n});"
     }
   ],
-  "dataThinking": "In frontend, sorting is usually about comparator design, not algorithm choice. The browser's sort is fast enough. Your challenge is: (1) correct multi-key comparators, (2) stable sort semantics for progressive refinement, (3) extracting sort keys efficiently (precompute expensive keys before sorting).",
+  "dataThinking": "在前端，排序通常是比較器設計問題，而非演算法選擇問題。瀏覽器的排序已經夠快了。你的挑戰是：(1) 正確的多 key 比較器，(2) 漸進式細化的穩定排序語義，(3) 有效率地提取排序 key（在排序前預計算昂貴的 key）。",
   "naiveApproach": {
-    "description": "Bubble sort or selection sort — O(n²). Readable but impractical for large data.",
+    "description": "氣泡排序或選擇排序——O(n²)。可讀性高但對大資料不實用。",
     "complexity": "O(n²) time, O(1) space"
   },
   "betterApproach": {
-    "description": "Use Array.prototype.sort() with a custom comparator. For expensive key extraction, use the Schwartzian transform: map to [key, item], sort by key, map back to items.",
+    "description": "使用帶自訂比較器的 Array.prototype.sort()。對於昂貴的 key 提取，使用 Schwartzian transform：map 為 [key, item]，依 key 排序，再 map 回 items。",
     "complexity": "O(n log n) time, O(n) space"
   },
   "implementation": {
@@ -46,7 +46,7 @@
   },
   "visualizationSteps": [
     {
-      "label": "Unsorted feed items",
+      "label": "未排序的動態消息項目",
       "state": {
         "items": [
           { "id": 1, "pinned": false, "score": 45, "age": 2 },
@@ -54,10 +54,10 @@
           { "id": 3, "pinned": false, "score": 90, "age": 1 }
         ]
       },
-      "explanation": "Three items: one pinned (low score), two regular. We want: pinned first, then by score."
+      "explanation": "三個項目：一個置頂（低分），兩個普通。我們想要：置頂優先，然後依分數排序。"
     },
     {
-      "label": "After sort by pinned first",
+      "label": "依置頂排序後",
       "state": {
         "items": [
           { "id": 2, "pinned": true, "score": 10 },
@@ -65,40 +65,40 @@
           { "id": 1, "pinned": false, "score": 45 }
         ]
       },
-      "explanation": "Item 2 (pinned) rises to top regardless of score. Regular items sorted by score descending."
+      "explanation": "項目 2（置頂）無論分數如何都上升到頂部。普通項目依分數降序排列。"
     },
     {
-      "label": "Comparator logic",
+      "label": "比較器邏輯",
       "state": {
         "comparator": "if pinned differs: pinned first. else: higher score first. else: newer first."
       },
-      "explanation": "The comparator is a priority chain. Each level only applies when higher-priority keys are equal."
+      "explanation": "比較器是一個優先鏈。每個層級只在更高優先 key 相等時才適用。"
     }
   ],
   "practiceItems": [
     {
       "id": "sort-1",
-      "title": "Table Column Sort with Toggle",
-      "question": "Implement a useSortedData hook that takes an array and manages sort state (column key + direction). Clicking the same column toggles asc/desc; clicking a new column starts asc.",
-      "hint1": "Store { key: string, dir: 'asc'|'desc' } as sort state. useMemo the sorted array.",
-      "hint2": "When setting key: if same key, toggle dir. If new key, set dir to 'asc'.",
+      "title": "可切換的表格欄位排序",
+      "question": "實作一個 useSortedData hook，接收一個陣列並管理排序狀態（欄位 key + 方向）。點擊同一欄位時切換升/降序；點擊新欄位時從升序開始。",
+      "hint1": "將 { key: string, dir: 'asc'|'desc' } 作為排序狀態儲存。用 useMemo 計算排序後的陣列。",
+      "hint2": "設定 key 時：若是相同 key，切換方向。若是新 key，設定方向為 'asc'。",
       "solution": "function useSortedData<T extends Record<string,unknown>>(data: T[]) {\n  const [sort, setSort] = React.useState<{key: keyof T, dir:'asc'|'desc'}|null>(null);\n  const sorted = React.useMemo(() => {\n    if (!sort) return data;\n    return [...data].sort((a,b) => {\n      const av = a[sort.key], bv = b[sort.key];\n      const cmp = av < bv ? -1 : av > bv ? 1 : 0;\n      return sort.dir === 'asc' ? cmp : -cmp;\n    });\n  }, [data, sort]);\n  const toggleSort = (key: keyof T) => setSort(s =>\n    s?.key === key ? { key, dir: s.dir==='asc'?'desc':'asc' } : { key, dir: 'asc' }\n  );\n  return { sorted, sort, toggleSort };\n}",
       "type": "engineering"
     },
     {
       "id": "sort-2",
-      "title": "Top-K Elements",
-      "question": "Given an array of products with scores, return the top K products without sorting the entire array. This is more efficient when K is much smaller than N.",
-      "hint1": "You don't need to sort everything — partial sort or a min-heap of size K works. For simplicity, sort descending and slice.",
-      "hint2": "For the optimal O(n log k) solution, maintain a min-heap of size K. If a new item beats the heap minimum, replace it.",
+      "title": "前 K 個元素",
+      "question": "給定一個有分數的產品陣列，不排序整個陣列的情況下回傳前 K 個產品。當 K 遠小於 N 時，這更有效率。",
+      "hint1": "不需要排序全部——部分排序或大小為 K 的最小堆即可。為了簡單起見，降序排序後 slice。",
+      "hint2": "最優 O(n log k) 解法是維護大小為 K 的最小堆。若新項目比堆的最小值好，則替換它。",
       "solution": "// Simple O(n log n) — fine for most frontend cases\nfunction topK<T>(items: T[], score: (item: T) => number, k: number): T[] {\n  return [...items]\n    .sort((a, b) => score(b) - score(a))\n    .slice(0, k);\n}",
       "type": "pattern"
     }
   ],
   "reflectionPrompts": [
-    "JavaScript's Array.sort() became stable in V8 v7.0 (Node 11+). Why does sort stability matter for multi-column table sorting?",
-    "What is the Schwartzian transform and when would you use it in a React application?",
-    "When would you implement a custom sort algorithm rather than using the built-in Array.sort()?",
-    "How does sorting interact with React's key reconciliation when rendering sorted lists?"
+    "JavaScript 的 Array.sort() 在 V8 v7.0（Node 11+）中變得穩定。為什麼排序穩定性對多欄位表格排序很重要？",
+    "什麼是 Schwartzian transform？你在什麼情況下會在 React 應用程式中使用它？",
+    "什麼情況下你會實作自訂排序演算法而不使用內建的 Array.sort()？",
+    "排序如何與 React 在渲染排序列表時的 key 調和互動？"
   ]
 }

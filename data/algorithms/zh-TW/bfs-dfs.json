@@ -1,45 +1,45 @@
 {
   "slug": "bfs-dfs",
-  "title": "BFS & DFS",
+  "title": "BFS 與 DFS",
   "difficulty": "medium",
   "tags": ["graphs", "BFS", "DFS", "traversal", "shortest-path"],
-  "summary": "Systematically explore graphs and networks — finding routes, detecting cycles, and resolving dependencies.",
-  "overview": "BFS (Breadth-First Search) and DFS (Depth-First Search) are graph traversal algorithms. BFS explores level by level (shortest path in unweighted graphs). DFS explores as deep as possible before backtracking (cycle detection, topological sort, connectivity). Both operate on graphs: nodes + edges, which generalizes trees.",
-  "coreConcept": "BFS uses a queue: start at source, enqueue neighbors, process in FIFO order. DFS uses a stack (or recursion): start at source, visit a neighbor, go deep, backtrack. The key difference: BFS guarantees the shortest path (fewest hops) in unweighted graphs. DFS is better for exhaustive search and when you need to track the full path.",
+  "summary": "系統性地探索圖和網路——找路徑、偵測循環，以及解析相依關係。",
+  "overview": "BFS（廣度優先搜尋）和 DFS（深度優先搜尋）是圖的遍歷演算法。BFS 逐層探索（在無權重圖中找最短路徑）。DFS 在回溯前盡可能深入（循環偵測、拓撲排序、連通性）。兩者都作用於圖：節點加上邊，是樹的一般化形式。",
+  "coreConcept": "BFS 使用佇列：從源節點開始，將鄰居加入佇列，以 FIFO 順序處理。DFS 使用堆疊（或遞迴）：從源節點開始，訪問一個鄰居，深入探索，再回溯。關鍵差異：BFS 保證在無權重圖中找到最短路徑（最少跳躍次數）。DFS 更適合窮舉搜尋以及需要追蹤完整路徑的情境。",
   "problemPatterns": [
-    "Shortest path in unweighted graph (BFS)",
-    "Connected components",
-    "Cycle detection",
-    "Topological sort (dependency order)",
-    "Island counting (connected regions)",
-    "DOM tree traversal"
+    "無權重圖中的最短路徑（BFS）",
+    "連通分量",
+    "循環偵測",
+    "拓撲排序（相依關係順序）",
+    "島嶼計數（連通區域）",
+    "DOM 樹遍歷"
   ],
   "signals": [
-    "Finding shortest/minimum path",
-    "Exploring all reachable nodes",
-    "Dependency resolution order",
-    "Checking connectivity",
-    "Grid-based pathfinding"
+    "尋找最短/最小路徑",
+    "探索所有可達節點",
+    "相依關係解析順序",
+    "檢查連通性",
+    "格狀圖尋路"
   ],
   "frontendScenarios": [
     {
-      "title": "Module Dependency Resolution",
-      "description": "A bundler resolves ES module imports as a directed graph. DFS finds import order and detects circular dependencies. Topological sort gives the correct bundle order.",
+      "title": "模組相依關係解析",
+      "description": "打包工具將 ES 模組的 import 解析為有向圖。DFS 找出 import 順序並偵測循環相依。拓撲排序給出正確的打包順序。",
       "example": "function topoSort(graph: Map<string, string[]>): string[] {\n  const visited = new Set<string>();\n  const order: string[] = [];\n  function dfs(node: string) {\n    if (visited.has(node)) return;\n    visited.add(node);\n    for (const dep of graph.get(node) ?? []) dfs(dep);\n    order.unshift(node);\n  }\n  for (const node of graph.keys()) dfs(node);\n  return order;\n}"
     },
     {
-      "title": "DOM Element Reachability",
-      "description": "Check if an element is a descendant of a given container — e.g., for focus trap detection. BFS or DFS from the container node through its children.",
+      "title": "DOM 元素可達性",
+      "description": "檢查某個元素是否是特定容器的後代——例如用於焦點陷阱（focus trap）偵測。從容器節點透過 BFS 或 DFS 遍歷其子元素。",
       "example": "function isDescendant(container: Element, target: Element): boolean {\n  const queue = [container];\n  while (queue.length) {\n    const el = queue.shift()!;\n    if (el === target) return true;\n    queue.push(...Array.from(el.children));\n  }\n  return false;\n}"
     }
   ],
-  "dataThinking": "A graph is just a generalization of a tree — nodes with connections, possibly with cycles. When data has arbitrary connections (not just parent-child), reach for BFS or DFS. In frontend: route graphs, dependency graphs, and state machine transitions are all graphs. The visited set is crucial — without it, cycles cause infinite loops.",
+  "dataThinking": "圖只是樹的一般化形式——節點加上連接，且可能存在循環。當資料有任意連接（不只是父子關係）時，就該使用 BFS 或 DFS。在前端：路由圖、相依關係圖和狀態機轉換都是圖。visited 集合至關重要——沒有它，循環會導致無限迴圈。",
   "naiveApproach": {
-    "description": "Recursion without visited tracking. Causes infinite loops on cyclic graphs.",
+    "description": "不追蹤已訪問節點的遞迴。在有循環的圖中會造成無限迴圈。",
     "complexity": "Can be O(∞) on cycles"
   },
   "betterApproach": {
-    "description": "Track visited nodes in a Set. Use BFS (queue) for shortest path. Use DFS (recursion or stack) for exhaustive search, connectivity, or topo sort.",
+    "description": "使用 Set 追蹤已訪問節點。使用 BFS（佇列）找最短路徑。使用 DFS（遞迴或堆疊）進行窮舉搜尋、連通性判斷或拓撲排序。",
     "complexity": "O(V + E) time and space where V=vertices, E=edges"
   },
   "implementation": {
@@ -48,21 +48,21 @@
   },
   "visualizationSteps": [
     {
-      "label": "Graph: A→B, A→C, B→D, C→D",
+      "label": "圖：A→B、A→C、B→D、C→D",
       "state": {
         "graph": { "A": ["B", "C"], "B": ["D"], "C": ["D"], "D": [] },
         "start": "A",
         "goal": "D"
       },
-      "explanation": "Find shortest path from A to D. Two paths exist: A→B→D and A→C→D (both length 2)."
+      "explanation": "找 A 到 D 的最短路徑。有兩條路徑：A→B→D 和 A→C→D（長度均為 2）。"
     },
     {
-      "label": "BFS: level 0 = [A]",
+      "label": "BFS：第 0 層 = [A]",
       "state": { "queue": [["A"]], "visited": ["A"], "level": 0 },
-      "explanation": "Start with path [A] in queue. Visited={A}."
+      "explanation": "以路徑 [A] 放入佇列開始。Visited={A}。"
     },
     {
-      "label": "BFS: level 1 = [B, C]",
+      "label": "BFS：第 1 層 = [B, C]",
       "state": {
         "queue": [
           ["A", "B"],
@@ -71,43 +71,43 @@
         "visited": ["A", "B", "C"],
         "level": 1
       },
-      "explanation": "Process [A]: enqueue [A,B] and [A,C]. Both at distance 1 from A."
+      "explanation": "處理 [A]：將 [A,B] 和 [A,C] 加入佇列。兩者距 A 的距離都是 1。"
     },
     {
-      "label": "BFS: level 2 — D found",
+      "label": "BFS：第 2 層——找到 D",
       "state": {
         "queue": [],
         "visited": ["A", "B", "C", "D"],
         "result": ["A", "B", "D"],
         "level": 2
       },
-      "explanation": "Process [A,B]: neighbor D not visited → enqueue [A,B,D]. D is target — return! Path length = 2."
+      "explanation": "處理 [A,B]：鄰居 D 尚未訪問，加入 [A,B,D]。D 是目標——回傳！路徑長度 = 2。"
     }
   ],
   "practiceItems": [
     {
       "id": "bd-1",
-      "title": "Detect Circular Import Dependencies",
-      "question": "Given a module dependency graph as Map<string, string[]> (module → its imports), detect if there is a circular dependency. Return the cycle path if found.",
-      "hint1": "DFS with three states: unvisited, in-progress (on current path), visited (fully processed). A cycle exists when you reach an in-progress node.",
-      "hint2": "Track the current DFS path. When you find a cycle, reconstruct it from the path.",
+      "title": "偵測循環 import 相依",
+      "question": "給定一個模組相依關係圖 Map<string, string[]>（模組 → 其 import），偵測是否存在循環相依。若有，回傳循環路徑。",
+      "hint1": "DFS 有三種狀態：未訪問、進行中（在當前路徑上）、已完成（完全處理）。當你到達一個進行中的節點時，代表存在循環。",
+      "hint2": "追蹤當前 DFS 路徑。當找到循環時，從路徑中重建它。",
       "solution": "function findCycle(graph: Map<string, string[]>): string[] | null {\n  const state = new Map<string, 'unvisited'|'active'|'done'>();\n  const path: string[] = [];\n  function dfs(node: string): boolean {\n    state.set(node, 'active');\n    path.push(node);\n    for (const dep of graph.get(node) ?? []) {\n      if (state.get(dep) === 'active') {\n        const cycleStart = path.indexOf(dep);\n        return true; // cycle from path[cycleStart..]\n      }\n      if (!state.has(dep) && dfs(dep)) return true;\n    }\n    path.pop();\n    state.set(node, 'done');\n    return false;\n  }\n  for (const node of graph.keys()) {\n    if (!state.has(node) && dfs(node)) return path;\n  }\n  return null;\n}",
       "type": "engineering"
     },
     {
       "id": "bd-2",
-      "title": "Count Connected Components",
-      "question": "Given a list of page IDs and links between them, count how many disconnected clusters exist. Useful for detecting isolated pages in a site map.",
-      "hint1": "BFS or DFS from each unvisited node. Each new traversal that starts from an unvisited node is a new component.",
-      "hint2": "Maintain a visited set. Increment component counter each time you start a new BFS/DFS from an unvisited node.",
+      "title": "計算連通分量數量",
+      "question": "給定一組頁面 ID 和它們之間的連結，計算有多少個不相連的群集。適合用來偵測網站地圖中孤立的頁面。",
+      "hint1": "從每個未訪問的節點進行 BFS 或 DFS。每次從未訪問節點開始的新遍歷就是一個新的分量。",
+      "hint2": "維護一個 visited 集合。每次從未訪問節點開始新的 BFS/DFS 時，遞增分量計數器。",
       "solution": "function countComponents(nodes: string[], edges: [string,string][]): number {\n  const graph = new Map<string, string[]>();\n  for (const n of nodes) graph.set(n, []);\n  for (const [a,b] of edges) {\n    graph.get(a)!.push(b);\n    graph.get(b)!.push(a);\n  }\n  const visited = new Set<string>();\n  let count = 0;\n  for (const node of nodes) {\n    if (!visited.has(node)) {\n      count++;\n      const queue = [node];\n      while (queue.length) {\n        const n = queue.shift()!;\n        if (visited.has(n)) continue;\n        visited.add(n);\n        queue.push(...(graph.get(n) ?? []));\n      }\n    }\n  }\n  return count;\n}",
       "type": "pattern"
     }
   ],
   "reflectionPrompts": [
-    "Why does BFS guarantee shortest path in an unweighted graph, but DFS does not?",
-    "In module bundlers, why is cycle detection important? What happens when there are circular imports?",
-    "How is the DOM tree a special case of a graph? When would you need graph algorithms (not just tree traversal) for DOM operations?",
-    "Topological sort requires a DAG (directed acyclic graph). How would you verify this precondition efficiently?"
+    "為什麼 BFS 能保證在無權重圖中找到最短路徑，而 DFS 不行？",
+    "在模組打包工具中，為什麼循環偵測很重要？循環 import 會發生什麼事？",
+    "DOM 樹是圖的一種特例。什麼情況下你需要圖演算法（而非只是樹遍歷）來進行 DOM 操作？",
+    "拓撲排序需要 DAG（有向無環圖）。你如何有效率地驗證這個前提條件？"
   ]
 }

@@ -1,50 +1,50 @@
 {
   "slug": "hash-map-set",
-  "title": "Hash Map & Set",
+  "title": "Hash Map 與 Set",
   "difficulty": "easy",
   "tags": ["hash-map", "set", "lookup", "deduplication", "normalization"],
-  "summary": "Trade space for O(1) average-case lookup, insertion, and deduplication by mapping keys to indexed buckets.",
-  "overview": "A hash map (object/Map in JS) stores key-value pairs with O(1) average lookup. A set stores unique values with O(1) membership tests. Both structures underlie the most common frontend optimization pattern: cache the result of a slow operation keyed by its input.",
-  "coreConcept": "Hash functions convert arbitrary keys into array indices. Collisions are resolved via chaining or open addressing. In JavaScript, plain objects, Map, and Set all give you hash-table semantics. The core trade-off: use extra memory to eliminate repeated work. If you find yourself scanning an array repeatedly, a map is almost always the fix.",
+  "summary": "用空間換取 O(1) 平均時間的查找、插入與去重，透過將 key 對應到索引位置來實現。",
+  "overview": "Hash map（JS 中的 object/Map）以 O(1) 平均時間儲存鍵值對並提供查找。Set 以 O(1) 儲存唯一值並提供成員測試。這兩種資料結構是前端最常見最佳化模式的基礎：將耗時操作的結果以輸入為 key 快取起來。",
+  "coreConcept": "雜湊函式將任意 key 轉換為陣列索引。衝突透過鏈結法或開放定址法解決。在 JavaScript 中，plain object、Map 和 Set 都提供雜湊表語義。核心取捨：用額外記憶體消除重複工作。若你發現自己反覆掃描陣列，使用 map 幾乎都能解決問題。",
   "problemPatterns": [
-    "Two Sum / complement lookup",
-    "Frequency counting (character counts, word counts)",
-    "Deduplication while preserving order",
-    "Grouping items by a key (group-by)",
-    "Normalizing API responses by ID for O(1) access",
-    "Detecting duplicates or first non-repeating element"
+    "Two Sum / 補數查找",
+    "頻率計算（字元計數、詞頻）",
+    "保留順序的去重",
+    "依 key 分組（group-by）",
+    "將 API 回應依 ID 正規化以實現 O(1) 存取",
+    "偵測重複或找第一個不重複的元素"
   ],
   "signals": [
-    "You're doing repeated arr.find() or arr.includes() inside a loop",
-    "Question asks 'have you seen this before?'",
-    "You need to count occurrences",
-    "You need to group items by a property",
-    "Lookup by ID from a flat array is a bottleneck"
+    "在迴圈內反覆呼叫 arr.find() 或 arr.includes()",
+    "問題詢問「你之前見過這個嗎？」",
+    "需要計算出現次數",
+    "需要依屬性分組項目",
+    "從扁平陣列依 ID 查找是效能瓶頸"
   ],
   "frontendScenarios": [
     {
-      "title": "Normalizing API Response Data",
-      "description": "An API returns an array of user objects. Components need to look up users by ID frequently. Converting the array to a Map<id, User> makes every lookup O(1) instead of O(n).",
+      "title": "正規化 API 回應資料",
+      "description": "API 回傳一個使用者物件陣列。元件需要頻繁依 ID 查找使用者。將陣列轉換為 Map<id, User> 可讓每次查找從 O(n) 變為 O(1)。",
       "example": "interface User { id: string; name: string; avatar: string; }\n\n// Before: O(n) on every lookup\nfunction getUserSlow(users: User[], id: string): User | undefined {\n  return users.find(u => u.id === id);\n}\n\n// After: build once O(n), then O(1) per lookup\nfunction buildUserMap(users: User[]): Map<string, User> {\n  return new Map(users.map(u => [u.id, u]));\n}\n\nconst userMap = buildUserMap(apiResponse.users);\nconst user = userMap.get(id); // O(1)"
     },
     {
-      "title": "Deduplicating Tag Lists",
-      "description": "A content editor lets users add tags. Tags must be unique and order-of-first-appearance matters. A Set handles both: insertion is O(1) and iteration preserves insertion order.",
+      "title": "去重標籤列表",
+      "description": "內容編輯器讓使用者新增標籤。標籤必須唯一，且要保留首次出現的順序。Set 同時解決這兩點：插入是 O(1)，迭代時也保留插入順序。",
       "example": "const tags = new Set<string>();\nfunction addTag(tag: string) {\n  tags.add(tag.toLowerCase().trim());\n}\n// Convert back: [...tags]"
     },
     {
-      "title": "Redux-style Entities Slice",
-      "description": "State management libraries normalize collections into { ids: string[], entities: Record<id, Item> }. This pattern lets the UI render lists (ids) while components read single items (entities[id]) in O(1).",
+      "title": "Redux 風格的實體 Slice",
+      "description": "狀態管理函式庫將集合正規化為 { ids: string[], entities: Record<id, Item> }。這個模式讓 UI 渲染列表（ids），同時元件以 O(1) 讀取單一項目（entities[id]）。",
       "example": "interface EntityState<T> {\n  ids: string[];\n  entities: Record<string, T>;\n}\nfunction normalize<T extends {id:string}>(items: T[]): EntityState<T> {\n  return {\n    ids: items.map(i => i.id),\n    entities: Object.fromEntries(items.map(i => [i.id, i]))\n  };\n}"
     }
   ],
-  "dataThinking": "Arrays are good at ordered access (index) and appending. Maps are good at keyed access. The moment you find yourself calling .find() inside a render loop or in a hot code path, normalize to a Map first. In React, this pattern often appears in useMemo to avoid rebuilding on every render:\n\nconst itemMap = useMemo(\n  () => new Map(items.map(i => [i.id, i])),\n  [items] // only rebuilds when items reference changes\n);",
+  "dataThinking": "陣列擅長有序存取（索引）和追加。Map 擅長鍵值存取。一旦你發現自己在渲染迴圈或熱路徑中呼叫 .find()，就先正規化為 Map。在 React 中，這個模式常出現在 useMemo 中，以避免每次渲染都重新建立：\n\nconst itemMap = useMemo(\n  () => new Map(items.map(i => [i.id, i])),\n  [items] // only rebuilds when items reference changes\n);",
   "naiveApproach": {
-    "description": "Store data in an array; use .find() or .includes() for lookups. Simple to write, but O(n) per lookup.",
+    "description": "將資料儲存在陣列中；使用 .find() 或 .includes() 查找。寫起來簡單，但每次查找是 O(n)。",
     "complexity": "O(n) lookup, O(1) insertion"
   },
   "betterApproach": {
-    "description": "Build a Map or Set upfront in O(n). Then every lookup is O(1) average. Total: O(n) time + O(n) space for the map.",
+    "description": "預先以 O(n) 建立 Map 或 Set。之後每次查找平均 O(1)。總計：O(n) 時間 + O(n) 空間用於 map。",
     "complexity": "O(n) build, O(1) lookup, O(n) space"
   },
   "implementation": {
@@ -53,12 +53,12 @@
   },
   "visualizationSteps": [
     {
-      "label": "Start: Two Sum problem",
+      "label": "開始：Two Sum 問題",
       "state": { "nums": [2, 7, 11, 15], "target": 9, "i": 0, "seen": {}, "complement": null },
-      "explanation": "Looking for two numbers that sum to 9. Start with empty map. i=0, nums[0]=2."
+      "explanation": "尋找兩個總和為 9 的數字。從空 map 開始。i=0，nums[0]=2。"
     },
     {
-      "label": "i=0: Store 2 → 0",
+      "label": "i=0：儲存 2 → 0",
       "state": {
         "nums": [2, 7, 11, 15],
         "target": 9,
@@ -67,10 +67,10 @@
         "complement": 7,
         "found": false
       },
-      "explanation": "complement = 9 - 2 = 7. 7 not in map. Store seen[2]=0 and move on."
+      "explanation": "complement = 9 - 2 = 7。7 不在 map 中。儲存 seen[2]=0 後繼續。"
     },
     {
-      "label": "i=1: Complement found!",
+      "label": "i=1：找到補數！",
       "state": {
         "nums": [2, 7, 11, 15],
         "target": 9,
@@ -79,47 +79,47 @@
         "complement": 2,
         "found": true
       },
-      "explanation": "complement = 9 - 7 = 2. seen[2]=0 exists! Return [0, 1]. Only one pass through the array."
+      "explanation": "complement = 9 - 7 = 2。seen[2]=0 存在！回傳 [0, 1]。只需一次掃描陣列。"
     },
     {
-      "label": "Result",
+      "label": "結果",
       "state": { "result": [0, 1], "verification": "nums[0] + nums[1] = 2 + 7 = 9 ✓" },
-      "explanation": "O(n) time, O(n) space. Without the map, we'd need O(n²) with a nested loop."
+      "explanation": "O(n) 時間，O(n) 空間。若沒有 map，我們需要 O(n²) 的巢狀迴圈。"
     }
   ],
   "practiceItems": [
     {
       "id": "hm-1",
-      "title": "First Non-Repeating Character",
-      "question": "Given a string, find the first character that appears exactly once. Return its index, or -1. (This mirrors finding the first unique event type in an analytics stream.)",
-      "hint1": "Two passes: first build a frequency map, then scan left to right for the first char with count 1.",
-      "hint2": "Use a Map<string, number> to preserve insertion order and get accurate counts.",
+      "title": "第一個不重複的字元",
+      "question": "給定一個字串，找到第一個只出現一次的字元。回傳其索引，或 -1。（這類似於在分析資料串流中找到第一個唯一的事件類型。）",
+      "hint1": "兩次掃描：先建立頻率 map，再從左到右掃描找第一個計數為 1 的字元。",
+      "hint2": "使用 Map<string, number> 來保留插入順序並獲得精確的計數。",
       "solution": "function firstUnique(s: string): number {\n  const freq = new Map<string, number>();\n  for (const ch of s) freq.set(ch, (freq.get(ch) ?? 0) + 1);\n  for (let i = 0; i < s.length; i++) {\n    if (freq.get(s[i]) === 1) return i;\n  }\n  return -1;\n}",
       "type": "pattern"
     },
     {
       "id": "hm-2",
-      "title": "Normalize API Entities",
-      "question": "You receive an array of Comment objects: { id: string, postId: string, text: string, authorId: string }[]. Write a function that groups them by postId, and separately indexes them by id. Return both structures.",
-      "hint1": "One pass through the array can build both structures simultaneously.",
-      "hint2": "Use Map<string, Comment[]> for the grouping and Map<string, Comment> for the index.",
+      "title": "正規化 API 實體",
+      "question": "你收到一個 Comment 物件陣列：{ id: string, postId: string, text: string, authorId: string }[]。寫一個函式依 postId 分組，並分別依 id 建立索引。回傳兩個結構。",
+      "hint1": "一次遍歷陣列可以同時建立兩個結構。",
+      "hint2": "分組用 Map<string, Comment[]>，索引用 Map<string, Comment>。",
       "solution": "interface Comment { id: string; postId: string; text: string; authorId: string; }\nfunction normalizeComments(comments: Comment[]) {\n  const byId = new Map<string, Comment>();\n  const byPost = new Map<string, Comment[]>();\n  for (const c of comments) {\n    byId.set(c.id, c);\n    if (!byPost.has(c.postId)) byPost.set(c.postId, []);\n    byPost.get(c.postId)!.push(c);\n  }\n  return { byId, byPost };\n}",
       "type": "engineering"
     },
     {
       "id": "hm-3",
-      "title": "Longest Substring Without Repeating Characters",
-      "question": "Find the length of the longest substring with all unique characters. Classic sliding window + set problem that appears in token parsers and highlight range detection.",
-      "hint1": "Use a Set to track characters in the current window. Expand right; when duplicate found, shrink from left.",
-      "hint2": "A Map<char, index> lets you jump the left pointer directly to the right position instead of shrinking one by one.",
+      "title": "最長無重複字元子字串",
+      "question": "找出所有字元都唯一的最長子字串的長度。這是經典的滑動視窗 + set 問題，出現在 token 解析器和高亮範圍偵測中。",
+      "hint1": "使用 Set 追蹤當前視窗中的字元。向右擴展；找到重複時從左縮小。",
+      "hint2": "Map<char, index> 讓你能直接將 left 指標跳到正確位置，而不是逐一縮小。",
       "solution": "function lengthOfLongestSubstring(s: string): number {\n  const lastSeen = new Map<string, number>();\n  let maxLen = 0, left = 0;\n  for (let right = 0; right < s.length; right++) {\n    const ch = s[right];\n    if (lastSeen.has(ch) && lastSeen.get(ch)! >= left) {\n      left = lastSeen.get(ch)! + 1;\n    }\n    lastSeen.set(ch, right);\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n  return maxLen;\n}",
       "type": "pattern"
     }
   ],
   "reflectionPrompts": [
-    "When should you use a plain object {} vs Map vs Set in JavaScript? What are the trade-offs?",
-    "Hash maps use O(n) extra space. When is that trade-off not worth it?",
-    "How does the 'normalize by ID' pattern in Redux/Zustand relate to database indexing?",
-    "In React, when would you put a Map inside useMemo vs computing it directly in render?"
+    "什麼時候應該在 JavaScript 中使用 plain object {}、Map 或 Set？各自的取捨是什麼？",
+    "Hash map 使用 O(n) 額外空間。什麼情況下這個取捨不值得？",
+    "Redux/Zustand 中的「依 ID 正規化」模式與資料庫索引有何關聯？",
+    "在 React 中，何時應該將 Map 放在 useMemo 中，而非直接在 render 中計算？"
   ]
 }

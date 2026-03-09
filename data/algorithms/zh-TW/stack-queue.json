@@ -1,45 +1,45 @@
 {
   "slug": "stack-queue",
-  "title": "Stack & Queue",
+  "title": "堆疊與佇列 (Stack & Queue)",
   "difficulty": "easy",
   "tags": ["stack", "queue", "LIFO", "FIFO", "undo-redo"],
-  "summary": "Model ordered, sequential processing — stacks for last-in-first-out (undo/redo), queues for first-in-first-out (event pipelines).",
-  "overview": "A stack adds and removes from the same end (LIFO). A queue adds at one end and removes from the other (FIFO). Both are abstract interfaces with concrete use cases: stacks model call stacks, undo history, and bracket matching; queues model task queues, BFS, and event streams.",
-  "coreConcept": "Stack: push to add, pop to remove, peek to inspect top — all O(1). Queue: enqueue at rear, dequeue from front — O(1) with a proper deque or circular buffer. In JavaScript, arrays serve as both but array.shift() is O(n); use an index pointer for O(1) dequeuing.",
+  "summary": "為有序的循序處理建模——堆疊用於後進先出（復原/取消復原），佇列用於先進先出（事件管線）。",
+  "overview": "堆疊在同一端新增和移除元素（LIFO）。佇列在一端新增、另一端移除（FIFO）。兩者都是抽象介面，有具體的使用場景：堆疊模擬呼叫堆疊、復原歷史和括號匹配；佇列模擬任務佇列、BFS 和事件串流。",
+  "coreConcept": "堆疊：push 新增，pop 移除，peek 查看頂部——全部 O(1)。佇列：enqueue 加入尾端，dequeue 從頭部移除——使用適當的雙端佇列或環形緩衝時 O(1)。在 JavaScript 中，陣列可同時充當兩者，但 array.shift() 是 O(n)；使用索引指標可實現 O(1) 的 dequeue。",
   "problemPatterns": [
-    "Balanced bracket / parenthesis matching",
-    "Undo/redo history",
-    "Browser back/forward navigation",
-    "Monotonic stack (next greater element)",
-    "BFS implementation",
-    "Function call stack simulation"
+    "括號匹配",
+    "復原/取消復原歷史",
+    "瀏覽器上一頁/下一頁導航",
+    "單調堆疊（下一個更大元素）",
+    "BFS 實作",
+    "函式呼叫堆疊模擬"
   ],
   "signals": [
-    "You need to reverse order or backtrack",
-    "Last action needs to be undone",
-    "Processing order must be preserved (FIFO)",
-    "Nested structure with matching pairs",
-    "You're implementing a wizard/multi-step flow"
+    "需要反轉順序或回溯",
+    "最後一個動作需要被撤銷",
+    "處理順序必須被保留（FIFO）",
+    "有配對的巢狀結構",
+    "你正在實作精靈/多步驟流程"
   ],
   "frontendScenarios": [
     {
-      "title": "Undo/Redo in a Rich Text Editor",
-      "description": "Two stacks: undoStack and redoStack. Every edit pushes state to undoStack. Undo pops from undoStack and pushes to redoStack. Redo pops from redoStack and pushes back to undoStack.",
+      "title": "富文字編輯器的復原/取消復原",
+      "description": "兩個堆疊：undoStack 和 redoStack。每次編輯將狀態 push 到 undoStack。復原時從 undoStack pop 並 push 到 redoStack。取消復原時從 redoStack pop 並 push 回 undoStack。",
       "example": "class UndoManager {\n  private undoStack: string[] = [];\n  private redoStack: string[] = [];\n  push(state: string) { this.undoStack.push(state); this.redoStack = []; }\n  undo() { const s = this.undoStack.pop(); if (s) this.redoStack.push(s); return this.undoStack.at(-1); }\n  redo() { const s = this.redoStack.pop(); if (s) this.undoStack.push(s); return s; }\n}"
     },
     {
-      "title": "Router History (Back/Forward)",
-      "description": "Browser history is modeled as a stack of pages visited. pushState adds to the stack. Back pops the current page and moves to the previous. Forward requires a second stack.",
+      "title": "路由歷史（上一頁/下一頁）",
+      "description": "瀏覽器歷史被建模為已訪問頁面的堆疊。pushState 加入堆疊。上一頁 pop 當前頁面並移至前一頁。下一頁需要第二個堆疊。",
       "example": "class RouterHistory {\n  private back: string[] = [location.href];\n  private forward: string[] = [];\n  navigate(url: string) { this.back.push(url); this.forward = []; }\n  goBack() { if (this.back.length > 1) { this.forward.push(this.back.pop()!); } }\n  goForward() { if (this.forward.length) { this.back.push(this.forward.pop()!); } }\n}"
     }
   ],
-  "dataThinking": "Stacks are implicit in recursive code — each function call pushes a frame, return pops it. When you see recursive algorithms, think 'could I make the stack explicit?' This is essential for iterative tree traversal and avoiding stack overflows in deep nesting scenarios common in component trees.",
+  "dataThinking": "堆疊在遞迴程式碼中是隱式的——每次函式呼叫 push 一個 frame，return 時 pop 它。當你看到遞迴演算法時，想想「我能將堆疊顯式化嗎？」這對於迭代式樹遍歷和避免元件樹深層巢狀場景中的堆疊溢位至關重要。",
   "naiveApproach": {
-    "description": "Use a plain array and track state manually without clear push/pop semantics. Often leads to off-by-one errors.",
+    "description": "使用 plain 陣列並手動追蹤狀態，沒有清晰的 push/pop 語義。常導致差一錯誤。",
     "complexity": "O(1) amortized for push/pop"
   },
   "betterApproach": {
-    "description": "Encapsulate the stack/queue logic in a class or custom hook. Use a pointer-based queue for O(1) dequeue instead of array.shift().",
+    "description": "將堆疊/佇列邏輯封裝在類別或自訂 hook 中。使用基於指標的佇列以實現 O(1) 的 dequeue，而非 array.shift()。",
     "complexity": "O(1) all operations"
   },
   "implementation": {
@@ -48,57 +48,57 @@
   },
   "visualizationSteps": [
     {
-      "label": "Undo stack after 3 edits",
+      "label": "3 次編輯後的復原堆疊",
       "state": {
         "undoStack": ["initial", "edit1", "edit2", "edit3"],
         "redoStack": [],
         "current": "edit3"
       },
-      "explanation": "User made 3 edits. Each push adds to undoStack. Current state is the top: 'edit3'."
+      "explanation": "使用者做了 3 次編輯。每次 push 都加入 undoStack。當前狀態是頂部：'edit3'。"
     },
     {
-      "label": "After undo",
+      "label": "復原後",
       "state": {
         "undoStack": ["initial", "edit1", "edit2"],
         "redoStack": ["edit3"],
         "current": "edit2"
       },
-      "explanation": "Undo: pop 'edit3' from undoStack, push to redoStack. Current is now 'edit2'."
+      "explanation": "復原：從 undoStack pop 'edit3'，push 到 redoStack。當前狀態現在是 'edit2'。"
     },
     {
-      "label": "After new edit — redo cleared",
+      "label": "新編輯後——取消復原被清除",
       "state": {
         "undoStack": ["initial", "edit1", "edit2", "newEdit"],
         "redoStack": [],
         "current": "newEdit"
       },
-      "explanation": "New edit while redoStack had items: clear redoStack (can't redo past a branch), push new state."
+      "explanation": "在 redoStack 有項目時進行新編輯：清除 redoStack（無法在分支後取消復原），push 新狀態。"
     }
   ],
   "practiceItems": [
     {
       "id": "sq-1",
-      "title": "Valid Parentheses in JSX",
-      "question": "JSX uses nested tags like brackets. Write a validator that checks if a simplified tag string like '<div><span></span></div>' has properly nested and closed tags.",
-      "hint1": "Use a stack. Push opening tags, pop and verify when you see a closing tag.",
-      "hint2": "Extract tag names from '<tagName>' and '</tagName>' patterns using string parsing.",
+      "title": "JSX 中的有效括號",
+      "question": "JSX 使用巢狀標籤就像括號一樣。寫一個驗證器，檢查像 '<div><span></span></div>' 這樣的簡化標籤字串是否有正確的巢狀和閉合標籤。",
+      "hint1": "使用堆疊。Push 開啟標籤，看到閉合標籤時 pop 並驗證。",
+      "hint2": "使用字串解析從 '<tagName>' 和 '</tagName>' 模式中提取標籤名稱。",
       "solution": "function validateTags(s: string): boolean {\n  const stack: string[] = [];\n  const matches = s.matchAll(/<\\/?([a-zA-Z]+)>/g);\n  for (const [, tag, name] of Array.from(matches).map(m => [m[0], m[0].startsWith('</') ? null : m[1], m[1]])) {\n    if (!tag.startsWith('</')) stack.push(name as string);\n    else if (stack.pop() !== name) return false;\n  }\n  return stack.length === 0;\n}",
       "type": "engineering"
     },
     {
       "id": "sq-2",
-      "title": "Implement Browser History",
-      "question": "Implement a RouterHistory class with: navigate(url), back(), forward(), and current property. Navigating to a new page should clear the forward stack.",
-      "hint1": "Two stacks: backStack (pages you can go back to) and forwardStack (pages you can redo).",
-      "hint2": "current is always the top of backStack. navigate() pushes to backStack and clears forwardStack.",
+      "title": "實作瀏覽器歷史",
+      "question": "實作一個 RouterHistory 類別，包含：navigate(url)、back()、forward() 和 current 屬性。導航到新頁面時應清除前進堆疊。",
+      "hint1": "兩個堆疊：backStack（可以返回的頁面）和 forwardStack（可以重做的頁面）。",
+      "hint2": "current 始終是 backStack 的頂部。navigate() push 到 backStack 並清除 forwardStack。",
       "solution": "class RouterHistory {\n  private backStack: string[];\n  private forwardStack: string[] = [];\n  constructor(initial: string) { this.backStack = [initial]; }\n  get current() { return this.backStack[this.backStack.length - 1]; }\n  navigate(url: string) { this.backStack.push(url); this.forwardStack = []; }\n  back() {\n    if (this.backStack.length > 1) this.forwardStack.push(this.backStack.pop()!);\n    return this.current;\n  }\n  forward() {\n    if (this.forwardStack.length) this.backStack.push(this.forwardStack.pop()!);\n    return this.current;\n  }\n}",
       "type": "engineering"
     }
   ],
   "reflectionPrompts": [
-    "The JavaScript call stack is literally a stack. How does this affect how you think about recursion depth?",
-    "Why does array.shift() perform poorly as a queue operation? What data structure would you use in a performance-critical queue?",
-    "Undo/redo systems use two stacks. How would you extend this to support branching history (like git)?",
-    "Event loops process tasks from a queue. How does the microtask queue vs macrotask queue difference relate to FIFO ordering?"
+    "JavaScript 的呼叫堆疊就是一個堆疊。這如何影響你對遞迴深度的思考？",
+    "為什麼 array.shift() 作為佇列操作效能很差？在效能關鍵的佇列中，你會使用什麼資料結構？",
+    "復原/取消復原系統使用兩個堆疊。你如何擴展它以支援分支歷史（像 git）？",
+    "事件迴圈從佇列中處理任務。微任務佇列和宏任務佇列的差異與 FIFO 排序有何關聯？"
   ]
 }
