@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- left line -->
+  <line x1="6" y1="32" x2="26" y2="32" stroke="#2563EB" stroke-width="7" stroke-linecap="round"></line>
+
+  <!-- right line -->
+  <line x1="44" y1="32" x2="58" y2="32" stroke="#2563EB" stroke-width="7" stroke-linecap="round"></line>
+
+  <!-- pivot -->
+  <circle cx="32" cy="32" r="9" stroke="#2563EB" stroke-width="6" fill="none"></circle>
+
+</svg>

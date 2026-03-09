@@ -28,8 +28,9 @@ export default async function LocaleLayout({
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link
             href="/"
-            className="font-bold text-gray-900 text-lg hover:text-blue-600 transition-colors"
+            className="font-bold text-gray-900 text-lg hover:text-blue-600 transition-colors flex items-center gap-2"
           >
+            <img src="/icon.svg" alt="" width={24} height={24} />
             {t("brand")}
           </Link>
           <nav className="flex items-center gap-6 text-sm">
