@@ -24,27 +24,27 @@ export function sortTopicsByCurriculum(topics: AlgorithmTopic[]): AlgorithmTopic
   });
 }
 
-export function getAllTopics(): AlgorithmTopic[] {
-  const topics = loadAllTopics();
+export function getAllTopics(locale = "en"): AlgorithmTopic[] {
+  const topics = loadAllTopics(locale);
   return sortTopicsByCurriculum(topics);
 }
 
-export function getTopicBySlug(slug: string): AlgorithmTopic | null {
+export function getTopicBySlug(slug: string, locale = "en"): AlgorithmTopic | null {
   try {
-    return loadTopicBySlug(slug);
+    return loadTopicBySlug(slug, locale);
   } catch {
     return null;
   }
 }
 
-export function getPreviousTopic(slug: string): AlgorithmTopic | null {
+export function getPreviousTopic(slug: string, locale = "en"): AlgorithmTopic | null {
   const idx = CURRICULUM_ORDER.indexOf(slug);
   if (idx <= 0) return null;
-  return getTopicBySlug(CURRICULUM_ORDER[idx - 1]);
+  return getTopicBySlug(CURRICULUM_ORDER[idx - 1], locale);
 }
 
-export function getNextTopic(slug: string): AlgorithmTopic | null {
+export function getNextTopic(slug: string, locale = "en"): AlgorithmTopic | null {
   const idx = CURRICULUM_ORDER.indexOf(slug);
   if (idx === -1 || idx >= CURRICULUM_ORDER.length - 1) return null;
-  return getTopicBySlug(CURRICULUM_ORDER[idx + 1]);
+  return getTopicBySlug(CURRICULUM_ORDER[idx + 1], locale);
 }

@@ -1,0 +1,123 @@
+{
+  "slug": "tree-traversal",
+  "title": "Tree Traversal",
+  "difficulty": "medium",
+  "tags": ["trees", "recursion", "DFS", "BFS", "nested-data"],
+  "summary": "Navigate hierarchical data structures — from DOM trees to nested menus — using depth-first or breadth-first strategies.",
+  "overview": "Tree traversal visits every node in a tree exactly once. Depth-first search (DFS) goes deep before wide: pre-order, in-order, post-order variants each have distinct uses. Breadth-first search (BFS) visits level by level using a queue. Frontend engineers encounter trees constantly: the DOM, component trees, file systems, comment threads, navigation menus.",
+  "coreConcept": "A tree node has a value and zero or more children. DFS uses the call stack (or explicit stack) to go deep; BFS uses a queue to go wide. Pre-order (visit before children) is natural for rendering. Post-order (visit after children) is natural for cleanup. In-order (left, node, right) is specific to binary search trees and gives sorted output.",
+  "problemPatterns": [
+    "Find a node by value or condition",
+    "Compute depth / height of a tree",
+    "Flatten nested structure to array",
+    "Transform every node (map over tree)",
+    "Aggregate values bottom-up (reduce over tree)",
+    "Find path from root to a node"
+  ],
+  "signals": [
+    "Data is nested or hierarchical",
+    "You need to visit every node",
+    "Components render children recursively",
+    "Depth or level information matters",
+    "You're building breadcrumbs or ancestry paths"
+  ],
+  "frontendScenarios": [
+    {
+      "title": "Nested Comment Thread Rendering",
+      "description": "Reddit-style comments have replies that have replies. The data is a tree. Rendering requires DFS pre-order: render a comment, then recursively render its replies, indented one level deeper.",
+      "example": "interface Comment { id: string; text: string; replies: Comment[]; }\nfunction CommentTree({ comment, depth = 0 }: { comment: Comment; depth?: number }) {\n  return (\n    <div style={{ paddingLeft: depth * 16 }}>\n      <p>{comment.text}</p>\n      {comment.replies.map(r => <CommentTree key={r.id} comment={r} depth={depth + 1} />)}\n    </div>\n  );\n}"
+    },
+    {
+      "title": "File System Explorer",
+      "description": "A folder tree needs expand/collapse. BFS is useful for loading level by level (lazy loading). DFS is useful for building the full path to a file or finding all files matching a pattern.",
+      "example": "interface FsNode { name: string; type: 'file'|'folder'; children?: FsNode[]; }\nfunction findFiles(node: FsNode, ext: string, path = ''): string[] {\n  const fullPath = path + '/' + node.name;\n  if (node.type === 'file') return fullPath.endsWith(ext) ? [fullPath] : [];\n  return (node.children ?? []).flatMap(child => findFiles(child, ext, fullPath));\n}"
+    },
+    {
+      "title": "Navigation Menu Active State",
+      "description": "A multi-level nav menu needs to highlight the active path. Given the current route, traverse the menu tree to find which items are ancestors of the active item.",
+      "example": "function findActivePath(items: NavItem[], target: string, path: NavItem[] = []): NavItem[] | null {\n  for (const item of items) {\n    const current = [...path, item];\n    if (item.href === target) return current;\n    if (item.children) {\n      const found = findActivePath(item.children, target, current);\n      if (found) return found;\n    }\n  }\n  return null;\n}"
+    }
+  ],
+  "dataThinking": "Think of tree traversal as a controlled visit schedule. The shape of your visit order encodes what information you have available at each step. Pre-order: you know the parent before children (useful for passing props down). Post-order: you know all children's results before computing parent (useful for aggregation). BFS: you know everyone at depth d before depth d+1 (useful for level-based operations).",
+  "naiveApproach": {
+    "description": "Ad-hoc recursion without clear traversal strategy. Often results in incorrect visit order or stack overflows on deep trees.",
+    "complexity": "O(n) time but error-prone"
+  },
+  "betterApproach": {
+    "description": "Choose traversal strategy intentionally. Use recursive DFS for most tree problems (clean code, natural for trees). Use iterative DFS (explicit stack) to avoid stack overflow on very deep trees. Use BFS (queue) for level-order needs.",
+    "complexity": "O(n) time, O(h) space for DFS (h=height), O(w) space for BFS (w=max width)"
+  },
+  "implementation": {
+    "language": "typescript",
+    "code": "interface TreeNode<T> {\n  value: T;\n  children: TreeNode<T>[];\n}\n\n// DFS pre-order (recursive) — visit node before children\nfunction dfsPreOrder<T>(node: TreeNode<T>, visit: (val: T) => void): void {\n  visit(node.value);\n  for (const child of node.children) {\n    dfsPreOrder(child, visit);\n  }\n}\n\n// DFS post-order — visit node after all children\nfunction dfsPostOrder<T>(node: TreeNode<T>, visit: (val: T) => void): void {\n  for (const child of node.children) {\n    dfsPostOrder(child, visit);\n  }\n  visit(node.value);\n}\n\n// BFS level-order using queue\nfunction bfs<T>(root: TreeNode<T>, visit: (val: T, level: number) => void): void {\n  const queue: Array<{ node: TreeNode<T>; level: number }> = [{ node: root, level: 0 }];\n  while (queue.length > 0) {\n    const { node, level } = queue.shift()!;\n    visit(node.value, level);\n    for (const child of node.children) {\n      queue.push({ node: child, level: level + 1 });\n    }\n  }\n}\n\n// Flatten tree to array (DFS pre-order)\nfunction flatten<T>(node: TreeNode<T>): T[] {\n  return [node.value, ...node.children.flatMap(flatten)];\n}\n\n// Find path to node matching predicate\nfunction findPath<T>(node: TreeNode<T>, pred: (val: T) => boolean, path: T[] = []): T[] | null {\n  const current = [...path, node.value];\n  if (pred(node.value)) return current;\n  for (const child of node.children) {\n    const found = findPath(child, pred, current);\n    if (found) return found;\n  }\n  return null;\n}"
+  },
+  "visualizationSteps": [
+    {
+      "label": "Set up — push root A onto stack",
+      "state": {
+        "nodes": ["A", "B", "C", "D", "E", "F"],
+        "edges": ["A→B", "A→C", "B→D", "B→E", "C→F"],
+        "traversal": "DFS pre-order",
+        "visited": [],
+        "stack": ["A"],
+        "current": null
+      },
+      "explanation": "Tree: A has children B, C. B has children D, E. C has child F. We use an explicit stack for iterative DFS. Start by pushing root A."
+    },
+    {
+      "label": "Pop A → visit A, push children C then B",
+      "state": { "visited": ["A"], "stack": ["C", "B"], "current": "B" },
+      "explanation": "Visit A first (pre-order: node before children). Push children right-to-left so left child B sits on top. Next pop: B."
+    },
+    {
+      "label": "Pop B → visit B, push E then D; pop D, pop E",
+      "state": { "visited": ["A", "B", "D", "E"], "stack": ["C"], "current": "C" },
+      "explanation": "Visit B, push E then D. Pop D (leaf — no children to push), visit D. Pop E (leaf), visit E. B's entire subtree is done."
+    },
+    {
+      "label": "Pop C → visit C, push F; pop F — traversal complete",
+      "state": {
+        "visited": ["A", "B", "D", "E", "C", "F"],
+        "stack": [],
+        "current": null,
+        "complete": true
+      },
+      "explanation": "Pop C, visit it, push F. Pop F (leaf), visit F. Stack is empty — traversal complete. Pre-order result: A B D E C F."
+    }
+  ],
+  "practiceItems": [
+    {
+      "id": "tt-1",
+      "title": "Maximum Depth of Nested Menu",
+      "question": "Given a navigation tree where each item may have children, find the maximum nesting depth. This tells you how deep the deepest submenu goes — useful for dynamic indent calculations.",
+      "hint1": "Post-order recursion: compute depth of each child, take the max, add 1 for current node.",
+      "hint2": "Base case: a leaf node (no children) has depth 1.",
+      "solution": "interface NavItem { label: string; children?: NavItem[]; }\nfunction maxDepth(item: NavItem): number {\n  if (!item.children || item.children.length === 0) return 1;\n  return 1 + Math.max(...item.children.map(maxDepth));\n}",
+      "type": "pattern"
+    },
+    {
+      "id": "tt-2",
+      "title": "Flatten Nested Category Tree",
+      "question": "An e-commerce API returns categories as a tree. You need a flat sorted list for a dropdown select. Each item should show its full path (e.g. 'Electronics > Phones > Android').",
+      "hint1": "DFS pre-order, passing the current path string down. When you reach any node, add its full path to the result.",
+      "hint2": "You can include both leaf and non-leaf nodes — each gets its accumulated path.",
+      "solution": "interface Category { id: string; name: string; children?: Category[]; }\nfunction flattenCategories(cats: Category[], prefix = ''): Array<{id:string; label:string}> {\n  return cats.flatMap(cat => {\n    const label = prefix ? `${prefix} > ${cat.name}` : cat.name;\n    const self = { id: cat.id, label };\n    const children = cat.children ? flattenCategories(cat.children, label) : [];\n    return [self, ...children];\n  });\n}",
+      "type": "engineering"
+    },
+    {
+      "id": "tt-3",
+      "title": "Find Breadcrumb Path",
+      "question": "Given a page's URL slug and a site navigation tree, return the array of nav items from root to the matching item (the breadcrumb trail).",
+      "hint1": "DFS with path accumulation. Pass the current path down; return it when you find a match.",
+      "hint2": "Return null from each branch that doesn't contain the target. Bubble up the successful path.",
+      "solution": "interface NavItem { label: string; href?: string; children?: NavItem[]; }\nfunction getBreadcrumb(items: NavItem[], slug: string, path: NavItem[] = []): NavItem[] | null {\n  for (const item of items) {\n    const current = [...path, item];\n    if (item.href === slug) return current;\n    if (item.children) {\n      const result = getBreadcrumb(item.children, slug, current);\n      if (result) return result;\n    }\n  }\n  return null;\n}",
+      "type": "engineering"
+    }
+  ],
+  "reflectionPrompts": [
+    "When would you choose BFS over DFS for a frontend problem? Give a concrete example.",
+    "React's component tree is traversed during reconciliation. How does React's algorithm relate to tree traversal concepts?",
+    "What are the risks of deep recursion in JavaScript, and how would you convert a recursive DFS to an iterative one?",
+    "How does post-order traversal map to React's useEffect cleanup ordering?"
+  ]
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { PracticeItem } from "@/lib/types";
 import CodeBlock from "./CodeBlock";
 
@@ -13,6 +14,7 @@ function PracticeCard({
   index: number;
   total: number;
 }) {
+  const t = useTranslations("practice");
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
   const reveal = (key: string) => setRevealed((prev) => new Set([...prev, key]));
@@ -33,7 +35,7 @@ function PracticeCard({
     <div className="border border-gray-200 rounded-lg p-5 space-y-4">
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs text-gray-500 font-medium">
-          Problem {index + 1} of {total}
+          {t("problem", { index: index + 1, total })}
         </span>
         <span
           className={`text-xs font-medium px-2 py-0.5 rounded-full ${
@@ -50,7 +52,7 @@ function PracticeCard({
       <p className="text-gray-700 leading-relaxed">{item.question}</p>
 
       <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
-        💡 Work through this before looking at hints.
+        {t("tryFirst")}
       </p>
 
       <div className="flex flex-wrap gap-2">
@@ -60,14 +62,14 @@ function PracticeCard({
             onClick={() => hide("hint1")}
             className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors"
           >
-            Hide Hint 1
+            {t("hideHint1")}
           </button>
         ) : (
           <button
             onClick={() => reveal("hint1")}
             className="text-sm px-3 py-1 rounded border border-blue-300 text-blue-700 hover:bg-blue-50 cursor-pointer transition-colors"
           >
-            Show Hint 1
+            {t("showHint1")}
           </button>
         )}
 
@@ -78,14 +80,14 @@ function PracticeCard({
               onClick={() => hide("hint2")}
               className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors"
             >
-              Hide Hint 2
+              {t("hideHint2")}
             </button>
           ) : (
             <button
               onClick={() => reveal("hint2")}
               className="text-sm px-3 py-1 rounded border border-blue-300 text-blue-700 hover:bg-blue-50 cursor-pointer transition-colors"
             >
-              Show Hint 2
+              {t("showHint2")}
             </button>
           )
         ) : (
@@ -93,7 +95,7 @@ function PracticeCard({
             disabled
             className="text-sm px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed"
           >
-            🔒 Hint 2
+            {t("hint2Locked")}
           </button>
         )}
 
@@ -104,14 +106,14 @@ function PracticeCard({
               onClick={() => hide("solution")}
               className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors"
             >
-              Hide Solution
+              {t("hideSolution")}
             </button>
           ) : (
             <button
               onClick={() => reveal("solution")}
               className="text-sm px-3 py-1 rounded border border-green-300 text-green-700 hover:bg-green-50 cursor-pointer transition-colors"
             >
-              Show Solution
+              {t("showSolution")}
             </button>
           )
         ) : (
@@ -119,24 +121,26 @@ function PracticeCard({
             disabled
             className="text-sm px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed"
           >
-            🔒 Solution
+            {t("solutionLocked")}
           </button>
         )}
       </div>
 
       {hint1Shown && (
         <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-          <span className="font-medium">Hint 1:</span> {item.hint1}
+          <span className="font-medium">{t("hint1Label")}:</span> {item.hint1}
         </div>
       )}
       {hint2Shown && (
         <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-          <span className="font-medium">Hint 2:</span> {item.hint2}
+          <span className="font-medium">{t("hint2Label")}:</span> {item.hint2}
         </div>
       )}
       {solutionShown && (
         <div className="space-y-1">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Solution</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            {t("solutionLabel")}
+          </p>
           <CodeBlock code={item.solution} language="typescript" />
         </div>
       )}

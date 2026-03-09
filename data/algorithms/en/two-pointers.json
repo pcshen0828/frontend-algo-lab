@@ -1,0 +1,99 @@
+{
+  "slug": "two-pointers",
+  "title": "Two Pointers",
+  "difficulty": "easy",
+  "tags": ["arrays", "sorting", "optimization", "in-place"],
+  "summary": "Use two indices moving toward each other or in tandem to solve array problems in O(n) instead of O(n²).",
+  "overview": "The two-pointer technique places pointers at strategic positions (often both ends of a sorted array, or one slow and one fast). By moving them based on conditions, you avoid nested loops. It works when the sorted order gives you information that lets you make greedy directional decisions.",
+  "coreConcept": "Two pointers work because sorted order creates a monotonic relationship: moving left pointer right increases the sum; moving right pointer left decreases it. When you need a sum = target, if current sum is too small, advance left; too big, retreat right. This eliminates entire rows/columns of the search space per step.",
+  "problemPatterns": [
+    "Two Sum on sorted array",
+    "Three Sum / k-Sum",
+    "Remove duplicates in-place",
+    "Container with most water",
+    "Palindrome detection",
+    "Merge two sorted arrays"
+  ],
+  "signals": [
+    "Sorted array + pair/triple search",
+    "In-place modification of array",
+    "Range selection (start/end)",
+    "Detecting conflicts in time intervals",
+    "Comparing sequences from both ends"
+  ],
+  "frontendScenarios": [
+    {
+      "title": "Date Range Conflict Detection",
+      "description": "A calendar has sorted time slots. Check if any two bookings overlap. Sort by start time, then use two pointers to check adjacent pairs — if slot[i].end > slot[i+1].start, they conflict.",
+      "example": "function hasConflict(slots: {start:number;end:number}[]): boolean {\n  const sorted = [...slots].sort((a,b) => a.start - b.start);\n  for (let i = 0; i < sorted.length - 1; i++) {\n    if (sorted[i].end > sorted[i+1].start) return true;\n  }\n  return false;\n}"
+    },
+    {
+      "title": "Merge Two Sorted Data Streams",
+      "description": "Two paginated APIs return sorted results. Merge them into a single sorted list for display. Classic merge step from merge sort, using two pointers advancing through each array.",
+      "example": "function mergeSorted<T>(a: T[], b: T[], cmp: (x:T,y:T)=>number): T[] {\n  const result: T[] = [];\n  let i = 0, j = 0;\n  while (i < a.length && j < b.length) {\n    result.push(cmp(a[i], b[j]) <= 0 ? a[i++] : b[j++]);\n  }\n  return result.concat(a.slice(i), b.slice(j));\n}"
+    }
+  ],
+  "dataThinking": "Two pointers are a spatial reasoning trick. Imagine the search space as a 2D grid: one axis is the left pointer, one is the right. You're finding cells satisfying a condition. Sorted order means the grid is monotonic — moving along one axis monotonically changes the value. This lets you prune entire rows/columns per step, reducing O(n²) to O(n).",
+  "naiveApproach": {
+    "description": "Nested loops: for each i, check all j > i. O(n²) comparisons.",
+    "complexity": "O(n²) time, O(1) space"
+  },
+  "betterApproach": {
+    "description": "Sort first (if not sorted). Place left=0, right=n-1. Move pointers inward based on comparison with target.",
+    "complexity": "O(n log n) for sort + O(n) scan = O(n log n) total"
+  },
+  "implementation": {
+    "language": "typescript",
+    "code": "// Two Sum II — sorted array\nfunction twoSumSorted(numbers: number[], target: number): [number, number] {\n  let left = 0, right = numbers.length - 1;\n  while (left < right) {\n    const sum = numbers[left] + numbers[right];\n    if (sum === target) return [left, right];\n    if (sum < target) left++;\n    else right--;\n  }\n  return [-1, -1];\n}\n\n// Remove duplicates from sorted array in-place\nfunction removeDuplicates(nums: number[]): number {\n  if (nums.length === 0) return 0;\n  let slow = 0;\n  for (let fast = 1; fast < nums.length; fast++) {\n    if (nums[fast] !== nums[slow]) {\n      nums[++slow] = nums[fast];\n    }\n  }\n  return slow + 1;\n}\n\n// Merge two sorted arrays\nfunction mergeSorted(a: number[], b: number[]): number[] {\n  const result: number[] = [];\n  let i = 0, j = 0;\n  while (i < a.length && j < b.length) {\n    result.push(a[i] <= b[j] ? a[i++] : b[j++]);\n  }\n  while (i < a.length) result.push(a[i++]);\n  while (j < b.length) result.push(b[j++]);\n  return result;\n}"
+  },
+  "visualizationSteps": [
+    {
+      "label": "Two Sum: sorted=[2,7,11,15], target=9",
+      "state": { "arr": [2, 7, 11, 15], "target": 9, "left": 0, "right": 3, "sum": 17 },
+      "explanation": "left=0 (value 2), right=3 (value 15). sum=17 > 9, so move right pointer left."
+    },
+    {
+      "label": "sum=13, still too big",
+      "state": { "arr": [2, 7, 11, 15], "target": 9, "left": 0, "right": 2, "sum": 13 },
+      "explanation": "right=2 (value 11). sum=13 > 9. Move right left again."
+    },
+    {
+      "label": "sum=9, found!",
+      "state": {
+        "arr": [2, 7, 11, 15],
+        "target": 9,
+        "left": 0,
+        "right": 1,
+        "sum": 9,
+        "found": true
+      },
+      "explanation": "right=1 (value 7). sum=2+7=9. Found! Return [0,1]. Only 3 comparisons for n=4."
+    }
+  ],
+  "practiceItems": [
+    {
+      "id": "tp-1",
+      "title": "Three Sum",
+      "question": "Find all unique triplets in an array that sum to zero. This appears in collision detection and constraint satisfaction.",
+      "hint1": "Sort first. Fix one element, then use two pointers on the remaining subarray.",
+      "hint2": "Skip duplicate values for both the fixed element and the two pointers to avoid duplicate triplets.",
+      "solution": "function threeSum(nums: number[]): number[][] {\n  nums.sort((a,b) => a-b);\n  const result: number[][] = [];\n  for (let i = 0; i < nums.length - 2; i++) {\n    if (i > 0 && nums[i] === nums[i-1]) continue;\n    let left = i+1, right = nums.length-1;\n    while (left < right) {\n      const sum = nums[i] + nums[left] + nums[right];\n      if (sum === 0) {\n        result.push([nums[i], nums[left], nums[right]]);\n        while (left < right && nums[left] === nums[left+1]) left++;\n        while (left < right && nums[right] === nums[right-1]) right--;\n        left++; right--;\n      } else if (sum < 0) left++;\n      else right--;\n    }\n  }\n  return result;\n}",
+      "type": "pattern"
+    },
+    {
+      "id": "tp-2",
+      "title": "Merge Two Sorted API Responses",
+      "question": "Two endpoints return sorted arrays of Event objects (sorted by timestamp). Merge them into a single sorted stream for display. This is common in activity feeds combining multiple data sources.",
+      "hint1": "Use two pointers, one per array. Always take the smaller of the two current elements.",
+      "hint2": "After the main loop, append any remaining items from either array.",
+      "solution": "interface Event { id: string; timestamp: number; type: string; }\nfunction mergeEventStreams(a: Event[], b: Event[]): Event[] {\n  const result: Event[] = [];\n  let i = 0, j = 0;\n  while (i < a.length && j < b.length) {\n    result.push(a[i].timestamp <= b[j].timestamp ? a[i++] : b[j++]);\n  }\n  return result.concat(a.slice(i), b.slice(j));\n}",
+      "type": "engineering"
+    }
+  ],
+  "reflectionPrompts": [
+    "Why must the array be sorted for the two-pointer technique to work on pair-sum problems?",
+    "The slow/fast pointer pattern (Floyd's cycle detection) is also called 'two pointers'. How is it different from the left/right variant?",
+    "How would you extend two-pointer pair sum to three-sum, and what is the resulting time complexity?",
+    "In the calendar conflict detection scenario, why does sorting by start time enable O(n) detection?"
+  ]
+}

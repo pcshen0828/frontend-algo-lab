@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "brand": "Frontend Algo Lab",
+    "algorithms": "演算法"
+  },
+  "home": {
+    "heroTitle": "前端演算法實驗室",
+    "heroSubtitle": "以前端工程師的視角解析演算法概念。從資料結構出發，建立工程思維。",
+    "browseAlgorithms": "瀏覽演算法 →",
+    "howItWorksTitle": "如何運作",
+    "card1Title": "靜態課程",
+    "card1Desc": "10 個核心演算法，深入探討問題模式、實作與逐步視覺化。以自己的節奏學習。",
+    "card2Title": "前端情境",
+    "card2Desc": "每個演算法都以真實前端應用場景為基礎，包含虛擬列表、狀態正規化、事件管線等。",
+    "card3Title": "AI 助教",
+    "card3Desc": "每個主題都內建 AI 助教。提問、獲得適合你程度的解說，並互動式探索邊界案例。",
+    "ctaTitle": "準備好開始了嗎？",
+    "ctaSubtitle": "從「{firstTopicTitle}」開始，或直接跳到課程中的任何主題。",
+    "startWith": "從「{firstTopicTitle}」開始",
+    "viewAllTopics": "查看所有主題"
+  },
+  "algorithms": {
+    "pageTitle": "演算法課程",
+    "pageSubtitle": "{count} 個核心演算法，從基礎到進階排列。每個主題包含前端情境、視覺化、練習題與 AI 助教。"
+  },
+  "topic": {
+    "overview": "概覽",
+    "coreConcept": "核心概念",
+    "problemPatterns": "問題模式",
+    "signals": "何時使用此模式",
+    "frontendScenarios": "前端情境",
+    "dataThinking": "資料思維",
+    "naiveApproach": "暴力解法",
+    "betterApproach": "最佳解法",
+    "implementation": "實作",
+    "visualization": "逐步視覺化",
+    "practice": "練習題",
+    "reflection": "反思提示"
+  },
+  "sidebar": {
+    "onThisPage": "本頁內容",
+    "overview": "概覽",
+    "coreConcept": "核心概念",
+    "problemPatterns": "問題模式",
+    "signals": "何時使用",
+    "frontendScenarios": "前端情境",
+    "dataThinking": "資料思維",
+    "naiveApproach": "暴力解法",
+    "betterApproach": "最佳解法",
+    "implementation": "實作",
+    "visualization": "視覺化",
+    "practice": "練習",
+    "reflection": "反思"
+  },
+  "practice": {
+    "problem": "第 {index} 題，共 {total} 題",
+    "tryFirst": "💡 請先嘗試解題，再查看提示。",
+    "showHint1": "顯示提示 1",
+    "hideHint1": "隱藏提示 1",
+    "showHint2": "顯示提示 2",
+    "hideHint2": "隱藏提示 2",
+    "hint2Locked": "🔒 提示 2",
+    "showSolution": "顯示解答",
+    "hideSolution": "隱藏解答",
+    "solutionLocked": "🔒 解答",
+    "solutionLabel": "解答",
+    "hint1Label": "提示 1",
+    "hint2Label": "提示 2"
+  },
+  "tutor": {
+    "openButton": "詢問 AI 助教",
+    "subheading": "對本主題有任何問題都可以問我",
+    "closeLabel": "關閉 AI 助教",
+    "thinking": "思考中...",
+    "sendButton": "送出",
+    "placeholder": "例如：什麼時候會在 React 應用中使用這個？",
+    "errorMessage": "抱歉，回應時發生問題，請再試一次。",
+    "greeting": "嗨！我可以解釋「{topicTitle}」的概念、帶你走過範例，或幫你辨識何時適合應用它。"
+  },
+  "visualization": {
+    "step": "第 {current} 步，共 {total} 步",
+    "prev": "← 上一步",
+    "next": "下一步 →"
+  }
+}

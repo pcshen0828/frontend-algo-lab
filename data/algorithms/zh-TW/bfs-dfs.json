@@ -1,0 +1,113 @@
+{
+  "slug": "bfs-dfs",
+  "title": "BFS & DFS",
+  "difficulty": "medium",
+  "tags": ["graphs", "BFS", "DFS", "traversal", "shortest-path"],
+  "summary": "Systematically explore graphs and networks — finding routes, detecting cycles, and resolving dependencies.",
+  "overview": "BFS (Breadth-First Search) and DFS (Depth-First Search) are graph traversal algorithms. BFS explores level by level (shortest path in unweighted graphs). DFS explores as deep as possible before backtracking (cycle detection, topological sort, connectivity). Both operate on graphs: nodes + edges, which generalizes trees.",
+  "coreConcept": "BFS uses a queue: start at source, enqueue neighbors, process in FIFO order. DFS uses a stack (or recursion): start at source, visit a neighbor, go deep, backtrack. The key difference: BFS guarantees the shortest path (fewest hops) in unweighted graphs. DFS is better for exhaustive search and when you need to track the full path.",
+  "problemPatterns": [
+    "Shortest path in unweighted graph (BFS)",
+    "Connected components",
+    "Cycle detection",
+    "Topological sort (dependency order)",
+    "Island counting (connected regions)",
+    "DOM tree traversal"
+  ],
+  "signals": [
+    "Finding shortest/minimum path",
+    "Exploring all reachable nodes",
+    "Dependency resolution order",
+    "Checking connectivity",
+    "Grid-based pathfinding"
+  ],
+  "frontendScenarios": [
+    {
+      "title": "Module Dependency Resolution",
+      "description": "A bundler resolves ES module imports as a directed graph. DFS finds import order and detects circular dependencies. Topological sort gives the correct bundle order.",
+      "example": "function topoSort(graph: Map<string, string[]>): string[] {\n  const visited = new Set<string>();\n  const order: string[] = [];\n  function dfs(node: string) {\n    if (visited.has(node)) return;\n    visited.add(node);\n    for (const dep of graph.get(node) ?? []) dfs(dep);\n    order.unshift(node);\n  }\n  for (const node of graph.keys()) dfs(node);\n  return order;\n}"
+    },
+    {
+      "title": "DOM Element Reachability",
+      "description": "Check if an element is a descendant of a given container — e.g., for focus trap detection. BFS or DFS from the container node through its children.",
+      "example": "function isDescendant(container: Element, target: Element): boolean {\n  const queue = [container];\n  while (queue.length) {\n    const el = queue.shift()!;\n    if (el === target) return true;\n    queue.push(...Array.from(el.children));\n  }\n  return false;\n}"
+    }
+  ],
+  "dataThinking": "A graph is just a generalization of a tree — nodes with connections, possibly with cycles. When data has arbitrary connections (not just parent-child), reach for BFS or DFS. In frontend: route graphs, dependency graphs, and state machine transitions are all graphs. The visited set is crucial — without it, cycles cause infinite loops.",
+  "naiveApproach": {
+    "description": "Recursion without visited tracking. Causes infinite loops on cyclic graphs.",
+    "complexity": "Can be O(∞) on cycles"
+  },
+  "betterApproach": {
+    "description": "Track visited nodes in a Set. Use BFS (queue) for shortest path. Use DFS (recursion or stack) for exhaustive search, connectivity, or topo sort.",
+    "complexity": "O(V + E) time and space where V=vertices, E=edges"
+  },
+  "implementation": {
+    "language": "typescript",
+    "code": "type Graph = Map<string, string[]>;\n\n// BFS — shortest path (unweighted)\nfunction bfsShortestPath(graph: Graph, start: string, end: string): string[] | null {\n  const queue: string[][] = [[start]];\n  const visited = new Set<string>([start]);\n  while (queue.length > 0) {\n    const path = queue.shift()!;\n    const node = path[path.length - 1];\n    if (node === end) return path;\n    for (const neighbor of graph.get(node) ?? []) {\n      if (!visited.has(neighbor)) {\n        visited.add(neighbor);\n        queue.push([...path, neighbor]);\n      }\n    }\n  }\n  return null;\n}\n\n// DFS — all reachable nodes\nfunction dfsReachable(graph: Graph, start: string): string[] {\n  const visited = new Set<string>();\n  const result: string[] = [];\n  function dfs(node: string) {\n    if (visited.has(node)) return;\n    visited.add(node);\n    result.push(node);\n    for (const neighbor of graph.get(node) ?? []) {\n      dfs(neighbor);\n    }\n  }\n  dfs(start);\n  return result;\n}\n\n// Topological sort (Kahn's algorithm — BFS based)\nfunction topologicalSort(graph: Graph): string[] | null {\n  const inDegree = new Map<string, number>();\n  for (const [node, neighbors] of graph) {\n    if (!inDegree.has(node)) inDegree.set(node, 0);\n    for (const n of neighbors) inDegree.set(n, (inDegree.get(n) ?? 0) + 1);\n  }\n  const queue = [...inDegree.entries()].filter(([, d]) => d === 0).map(([n]) => n);\n  const order: string[] = [];\n  while (queue.length) {\n    const node = queue.shift()!;\n    order.push(node);\n    for (const neighbor of graph.get(node) ?? []) {\n      const newDeg = (inDegree.get(neighbor) ?? 0) - 1;\n      inDegree.set(neighbor, newDeg);\n      if (newDeg === 0) queue.push(neighbor);\n    }\n  }\n  return order.length === graph.size ? order : null; // null = cycle detected\n}"
+  },
+  "visualizationSteps": [
+    {
+      "label": "Graph: A→B, A→C, B→D, C→D",
+      "state": {
+        "graph": { "A": ["B", "C"], "B": ["D"], "C": ["D"], "D": [] },
+        "start": "A",
+        "goal": "D"
+      },
+      "explanation": "Find shortest path from A to D. Two paths exist: A→B→D and A→C→D (both length 2)."
+    },
+    {
+      "label": "BFS: level 0 = [A]",
+      "state": { "queue": [["A"]], "visited": ["A"], "level": 0 },
+      "explanation": "Start with path [A] in queue. Visited={A}."
+    },
+    {
+      "label": "BFS: level 1 = [B, C]",
+      "state": {
+        "queue": [
+          ["A", "B"],
+          ["A", "C"]
+        ],
+        "visited": ["A", "B", "C"],
+        "level": 1
+      },
+      "explanation": "Process [A]: enqueue [A,B] and [A,C]. Both at distance 1 from A."
+    },
+    {
+      "label": "BFS: level 2 — D found",
+      "state": {
+        "queue": [],
+        "visited": ["A", "B", "C", "D"],
+        "result": ["A", "B", "D"],
+        "level": 2
+      },
+      "explanation": "Process [A,B]: neighbor D not visited → enqueue [A,B,D]. D is target — return! Path length = 2."
+    }
+  ],
+  "practiceItems": [
+    {
+      "id": "bd-1",
+      "title": "Detect Circular Import Dependencies",
+      "question": "Given a module dependency graph as Map<string, string[]> (module → its imports), detect if there is a circular dependency. Return the cycle path if found.",
+      "hint1": "DFS with three states: unvisited, in-progress (on current path), visited (fully processed). A cycle exists when you reach an in-progress node.",
+      "hint2": "Track the current DFS path. When you find a cycle, reconstruct it from the path.",
+      "solution": "function findCycle(graph: Map<string, string[]>): string[] | null {\n  const state = new Map<string, 'unvisited'|'active'|'done'>();\n  const path: string[] = [];\n  function dfs(node: string): boolean {\n    state.set(node, 'active');\n    path.push(node);\n    for (const dep of graph.get(node) ?? []) {\n      if (state.get(dep) === 'active') {\n        const cycleStart = path.indexOf(dep);\n        return true; // cycle from path[cycleStart..]\n      }\n      if (!state.has(dep) && dfs(dep)) return true;\n    }\n    path.pop();\n    state.set(node, 'done');\n    return false;\n  }\n  for (const node of graph.keys()) {\n    if (!state.has(node) && dfs(node)) return path;\n  }\n  return null;\n}",
+      "type": "engineering"
+    },
+    {
+      "id": "bd-2",
+      "title": "Count Connected Components",
+      "question": "Given a list of page IDs and links between them, count how many disconnected clusters exist. Useful for detecting isolated pages in a site map.",
+      "hint1": "BFS or DFS from each unvisited node. Each new traversal that starts from an unvisited node is a new component.",
+      "hint2": "Maintain a visited set. Increment component counter each time you start a new BFS/DFS from an unvisited node.",
+      "solution": "function countComponents(nodes: string[], edges: [string,string][]): number {\n  const graph = new Map<string, string[]>();\n  for (const n of nodes) graph.set(n, []);\n  for (const [a,b] of edges) {\n    graph.get(a)!.push(b);\n    graph.get(b)!.push(a);\n  }\n  const visited = new Set<string>();\n  let count = 0;\n  for (const node of nodes) {\n    if (!visited.has(node)) {\n      count++;\n      const queue = [node];\n      while (queue.length) {\n        const n = queue.shift()!;\n        if (visited.has(n)) continue;\n        visited.add(n);\n        queue.push(...(graph.get(n) ?? []));\n      }\n    }\n  }\n  return count;\n}",
+      "type": "pattern"
+    }
+  ],
+  "reflectionPrompts": [
+    "Why does BFS guarantee shortest path in an unweighted graph, but DFS does not?",
+    "In module bundlers, why is cycle detection important? What happens when there are circular imports?",
+    "How is the DOM tree a special case of a graph? When would you need graph algorithms (not just tree traversal) for DOM operations?",
+    "Topological sort requires a DAG (directed acyclic graph). How would you verify this precondition efficiently?"
+  ]
+}

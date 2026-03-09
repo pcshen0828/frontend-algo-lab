@@ -1,9 +1,15 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getPreviousTopic, getNextTopic } from "@/lib/topics";
 
-export default function TopicNavigation({ currentSlug }: { currentSlug: string }) {
-  const prev = getPreviousTopic(currentSlug);
-  const next = getNextTopic(currentSlug);
+export default function TopicNavigation({
+  currentSlug,
+  locale = "en",
+}: {
+  currentSlug: string;
+  locale?: string;
+}) {
+  const prev = getPreviousTopic(currentSlug, locale);
+  const next = getNextTopic(currentSlug, locale);
 
   if (!prev && !next) return null;
 

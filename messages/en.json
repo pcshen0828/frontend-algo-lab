@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "brand": "Frontend Algo Lab",
+    "algorithms": "Algorithms"
+  },
+  "home": {
+    "heroTitle": "Frontend Algo Lab",
+    "heroSubtitle": "Algorithm concepts explained through the lens of frontend engineering. Stop memorizing solutions. Start recognizing patterns.",
+    "browseAlgorithms": "Browse Algorithms →",
+    "howItWorksTitle": "How it works",
+    "card1Title": "Static Curriculum",
+    "card1Desc": "10 core algorithms with deep dives into problem patterns, implementation, and step-by-step visualization. Learn at your own pace.",
+    "card2Title": "Frontend Scenarios",
+    "card2Desc": "Every algorithm is grounded in real frontend use cases — virtual lists, state normalization, event pipelines, and more.",
+    "card3Title": "AI Tutor",
+    "card3Desc": "Each topic has a built-in AI tutor. Ask questions, get explanations tailored to your level, and explore edge cases interactively.",
+    "ctaTitle": "Ready to start?",
+    "ctaSubtitle": "Begin with {firstTopicTitle} or jump to any topic in the curriculum.",
+    "startWith": "Start with {firstTopicTitle}",
+    "viewAllTopics": "View All Topics"
+  },
+  "algorithms": {
+    "pageTitle": "Algorithm Curriculum",
+    "pageSubtitle": "{count} core algorithms, ordered from foundational to advanced. Each topic includes frontend scenarios, visualizations, practice problems, and an AI tutor."
+  },
+  "topic": {
+    "overview": "Overview",
+    "coreConcept": "Core Concept",
+    "problemPatterns": "Problem Patterns",
+    "signals": "When to Use This Pattern",
+    "frontendScenarios": "Frontend Scenarios",
+    "dataThinking": "Data Thinking",
+    "naiveApproach": "Naive Approach",
+    "betterApproach": "Better Approach",
+    "implementation": "Implementation",
+    "visualization": "Step-by-Step Visualization",
+    "practice": "Practice Problems",
+    "reflection": "Reflection Prompts"
+  },
+  "sidebar": {
+    "onThisPage": "On this page",
+    "overview": "Overview",
+    "coreConcept": "Core Concept",
+    "problemPatterns": "Problem Patterns",
+    "signals": "When to Use",
+    "frontendScenarios": "Frontend Scenarios",
+    "dataThinking": "Data Thinking",
+    "naiveApproach": "Naive Approach",
+    "betterApproach": "Better Approach",
+    "implementation": "Implementation",
+    "visualization": "Visualization",
+    "practice": "Practice",
+    "reflection": "Reflection"
+  },
+  "practice": {
+    "problem": "Problem {index} of {total}",
+    "tryFirst": "💡 Work through this before looking at hints.",
+    "showHint1": "Show Hint 1",
+    "hideHint1": "Hide Hint 1",
+    "showHint2": "Show Hint 2",
+    "hideHint2": "Hide Hint 2",
+    "hint2Locked": "🔒 Hint 2",
+    "showSolution": "Show Solution",
+    "hideSolution": "Hide Solution",
+    "solutionLocked": "🔒 Solution",
+    "solutionLabel": "Solution",
+    "hint1Label": "Hint 1",
+    "hint2Label": "Hint 2"
+  },
+  "tutor": {
+    "openButton": "Ask AI Tutor",
+    "subheading": "Ask me anything about this topic",
+    "closeLabel": "Close AI Tutor",
+    "thinking": "Thinking...",
+    "sendButton": "Send",
+    "placeholder": "e.g. When would I use this in a React app?",
+    "errorMessage": "Sorry, I had trouble responding. Please try again.",
+    "greeting": "Hi! I can explain {topicTitle} concepts, walk through examples, or help you spot when to apply it."
+  },
+  "visualization": {
+    "step": "Step {current} of {total}",
+    "prev": "← Prev",
+    "next": "Next →"
+  }
+}

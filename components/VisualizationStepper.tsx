@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import type { VisualizationStep } from "@/lib/types";
 
 function StateValue({
@@ -60,6 +61,7 @@ function StateValue({
 }
 
 export default function VisualizationStepper({ steps }: { steps: VisualizationStep[] }) {
+  const t = useTranslations("visualization");
   const [current, setCurrent] = useState(0);
 
   const prev = useCallback(() => setCurrent((c) => Math.max(0, c - 1)), []);
@@ -95,7 +97,7 @@ export default function VisualizationStepper({ steps }: { steps: VisualizationSt
       {/* Step header */}
       <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-200 flex items-center justify-between">
         <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-          Step {current + 1} of {steps.length}
+          {t("step", { current: current + 1, total: steps.length })}
         </span>
         <span className="text-sm font-semibold text-gray-800">{step.label}</span>
       </div>
@@ -147,14 +149,14 @@ export default function VisualizationStepper({ steps }: { steps: VisualizationSt
             disabled={current === 0}
             className="px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
-            ← Prev
+            {t("prev")}
           </button>
           <button
             onClick={next}
             disabled={current === steps.length - 1}
             className="px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
-            Next →
+            {t("next")}
           </button>
         </div>
       </div>

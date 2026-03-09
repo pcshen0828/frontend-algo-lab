@@ -1,0 +1,155 @@
+{
+  "slug": "binary-search",
+  "title": "Binary Search",
+  "difficulty": "easy",
+  "tags": ["arrays", "search", "divide-and-conquer", "sorted"],
+  "summary": "Efficiently find a target in a sorted collection by repeatedly halving the search space.",
+  "overview": "Binary search cuts the problem space in half on each iteration, achieving O(log n) time. It requires the input to be sorted (or monotonically ordered). Rather than scanning linearly, you maintain a [left, right] window and narrow it based on the midpoint value.",
+  "coreConcept": "At each step, pick the midpoint. If it equals the target, you're done. If target is greater, discard the left half. If less, discard the right half. Repeat until found or window is empty. The key insight is that sorted order gives you information — every comparison eliminates half the remaining candidates.",
+  "problemPatterns": [
+    "Find exact target in sorted array",
+    "Find leftmost/rightmost position (boundary search)",
+    "Search in rotated sorted array",
+    "Find minimum in rotated array",
+    "Monotonic condition: 'find the smallest x where f(x) is true'"
+  ],
+  "signals": [
+    "Input is sorted or can be sorted",
+    "You need O(log n) time",
+    "Question asks for a position, boundary, or threshold",
+    "There's a monotonic yes/no condition on the search space",
+    "Linear scan would be too slow"
+  ],
+  "frontendScenarios": [
+    {
+      "title": "Infinite Scroll Position Restore",
+      "description": "A virtualized list renders thousands of items. When restoring scroll state, you need to find which rendered 'chunk' contains a given scroll offset. Each chunk has a known cumulative height.",
+      "example": "interface Chunk { start: number; end: number; }\n\nfunction findChunkAtOffset(chunks: Chunk[], offset: number): number {\n  let left = 0;\n  let right = chunks.length - 1;\n\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (offset < chunks[mid].start) right = mid - 1;\n    else if (offset >= chunks[mid].end) left = mid + 1;\n    else return mid;\n  }\n\n  return -1; // offset outside all chunks\n}\n\n// findChunkAtOffset([{start:0,end:200},{start:200,end:450},{start:450,end:900}], 350)\n// => 1  (offset 350 falls in chunk[1]: 200–450)"
+    },
+    {
+      "title": "Timeline Event Lookup",
+      "description": "A video timeline has events at sorted timestamps. Given a playhead position, find the active event (the last event whose time is <= the current time) without scanning all events.",
+      "example": "interface TimelineEvent { time: number; label: string; }\n\nfunction findActiveEvent(\n  events: TimelineEvent[],\n  currentTime: number\n): TimelineEvent | null {\n  let left = 0;\n  let right = events.length - 1;\n  let result: TimelineEvent | null = null;\n\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (events[mid].time <= currentTime) {\n      result = events[mid]; // candidate — keep searching right\n      left = mid + 1;\n    } else {\n      right = mid - 1;\n    }\n  }\n\n  return result;\n}\n\n// findActiveEvent([{time:0,label:'Intro'},{time:5.2,label:'Chapter 1'},{time:12.8,label:'Chapter 2'}], 8.5)\n// => { time: 5.2, label: 'Chapter 1' }"
+    },
+    {
+      "title": "Design Token Range Picker",
+      "description": "A spacing scale [4,8,12,16,24,32,48,64] is sorted. Given a pixel value, find the closest token — useful for snapping UI elements to the design grid.",
+      "example": "scale = [4,8,12,16,24,32,48,64]\nfindClosestToken(scale, 20) // returns 16 or 24"
+    }
+  ],
+  "dataThinking": "Think of binary search as querying a sorted index. Sorted arrays are like B-tree leaves — the sort order encodes information that makes every comparison useful. In frontend data: sorted timestamps, ordered IDs, or cumulative offsets all qualify. The moment data is sorted, binary search becomes viable for any lookup operation.",
+  "naiveApproach": {
+    "description": "Linear scan from index 0: compare each element to target, return index when found.",
+    "complexity": "O(n) time, O(1) space"
+  },
+  "betterApproach": {
+    "description": "Maintain left/right pointers. Compute mid = Math.floor((left + right) / 2). Eliminate half the search space per step based on comparison.",
+    "complexity": "O(log n) time, O(1) space"
+  },
+  "implementation": {
+    "language": "typescript",
+    "code": "// Standard binary search — find exact target\nfunction binarySearch(arr: number[], target: number): number {\n  let left = 0;\n  let right = arr.length - 1;\n\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n\n  return -1; // not found\n}\n\n// Left boundary — find first position where arr[i] >= target\nfunction lowerBound(arr: number[], target: number): number {\n  let left = 0;\n  let right = arr.length;\n\n  while (left < right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid;\n  }\n\n  return left;\n}\n\n// Frontend example: find chunk containing scroll offset\ninterface Chunk { start: number; end: number; }\nfunction findChunkAtOffset(chunks: Chunk[], offset: number): number {\n  let left = 0;\n  let right = chunks.length - 1;\n\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (offset < chunks[mid].start) right = mid - 1;\n    else if (offset >= chunks[mid].end) left = mid + 1;\n    else return mid;\n  }\n\n  return -1;\n}"
+  },
+  "visualizationSteps": [
+    {
+      "label": "Initial state",
+      "state": {
+        "arr": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91],
+        "target": 23,
+        "left": 0,
+        "right": 9,
+        "mid": null,
+        "found": false
+      },
+      "explanation": "Array has 10 elements. Target is 23. left=0, right=9. We haven't compared anything yet."
+    },
+    {
+      "label": "First comparison — mid=4",
+      "state": {
+        "arr": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91],
+        "target": 23,
+        "left": 0,
+        "right": 9,
+        "mid": 4,
+        "midValue": 16,
+        "found": false
+      },
+      "explanation": "mid = floor((0+9)/2) = 4. arr[4]=16 < 23, so target is in the right half. Set left = mid+1 = 5."
+    },
+    {
+      "label": "Second comparison — mid=7",
+      "state": {
+        "arr": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91],
+        "target": 23,
+        "left": 5,
+        "right": 9,
+        "mid": 7,
+        "midValue": 56,
+        "found": false
+      },
+      "explanation": "mid = floor((5+9)/2) = 7. arr[7]=56 > 23, so target is in the left half. Set right = mid-1 = 6."
+    },
+    {
+      "label": "Third comparison — mid=5",
+      "state": {
+        "arr": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91],
+        "target": 23,
+        "left": 5,
+        "right": 6,
+        "mid": 5,
+        "midValue": 23,
+        "found": false
+      },
+      "explanation": "mid = floor((5+6)/2) = 5. arr[5]=23 === 23. Found!"
+    },
+    {
+      "label": "Target found",
+      "state": {
+        "arr": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91],
+        "target": 23,
+        "left": 5,
+        "right": 6,
+        "mid": 5,
+        "midValue": 23,
+        "found": true,
+        "result": 5
+      },
+      "explanation": "Binary search completed in 3 comparisons vs 6 for linear scan. For n=10, log2(10)≈3.32 — matches exactly."
+    }
+  ],
+  "practiceItems": [
+    {
+      "id": "bs-1",
+      "title": "Search in Rotated Sorted Array",
+      "question": "An array was sorted then rotated at an unknown pivot (e.g., [4,5,6,7,0,1,2]). Find a target value in O(log n). How does the rotation affect the binary search logic?",
+      "hint1": "At least one half is always sorted. Determine which half is sorted, then check if target falls in it.",
+      "hint2": "If arr[left] <= arr[mid], the left half is sorted. If target is in [arr[left], arr[mid]), search left; otherwise right.",
+      "solution": "function searchRotated(arr: number[], target: number): number {\n  let left = 0, right = arr.length - 1;\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[left] <= arr[mid]) { // left half sorted\n      if (target >= arr[left] && target < arr[mid]) right = mid - 1;\n      else left = mid + 1;\n    } else { // right half sorted\n      if (target > arr[mid] && target <= arr[right]) left = mid + 1;\n      else right = mid - 1;\n    }\n  }\n  return -1;\n}",
+      "type": "pattern"
+    },
+    {
+      "id": "bs-2",
+      "title": "Snap to Design Grid",
+      "question": "Given a sorted spacing scale [4, 8, 12, 16, 24, 32, 48, 64] and an arbitrary pixel value, find the closest value in the scale. Use binary search. This mirrors snapping UI drag handles to a design grid.",
+      "hint1": "Use lowerBound to find the first value >= target. Then check both the found value and the one before it.",
+      "hint2": "After finding the insertion point i, compare Math.abs(scale[i] - val) vs Math.abs(scale[i-1] - val) to pick the closer one.",
+      "solution": "function snapToScale(scale: number[], val: number): number {\n  let left = 0, right = scale.length;\n  while (left < right) {\n    const mid = Math.floor((left + right) / 2);\n    if (scale[mid] < val) left = mid + 1;\n    else right = mid;\n  }\n  if (left === 0) return scale[0];\n  if (left === scale.length) return scale[scale.length - 1];\n  const before = scale[left - 1];\n  const after = scale[left];\n  return (val - before) <= (after - val) ? before : after;\n}",
+      "type": "engineering"
+    },
+    {
+      "id": "bs-3",
+      "title": "Find Earliest Failing Build",
+      "question": "CI builds are numbered 1..n. All passing builds come before all failing ones (monotonic). Given a function isBadBuild(n), find the first bad build using minimum API calls.",
+      "hint1": "This is a classic binary search on a monotonic boolean condition.",
+      "hint2": "The answer is the lower bound: first index where isBadBuild returns true.",
+      "solution": "async function firstBadBuild(n: number, isBadBuild: (n: number) => Promise<boolean>): Promise<number> {\n  let left = 1, right = n;\n  while (left < right) {\n    const mid = Math.floor((left + right) / 2);\n    if (await isBadBuild(mid)) right = mid;\n    else left = mid + 1;\n  }\n  return left;\n}",
+      "type": "engineering"
+    }
+  ],
+  "reflectionPrompts": [
+    "Why does binary search require sorted (or monotonically ordered) input? What property are you exploiting?",
+    "What's the difference between finding an exact target vs finding a boundary (leftmost/rightmost)? How does the loop condition change?",
+    "In the infinite scroll example, why is binary search appropriate even though you're not searching for an exact match?",
+    "When would you prefer a hash map lookup over binary search, even on sorted data?"
+  ]
+}

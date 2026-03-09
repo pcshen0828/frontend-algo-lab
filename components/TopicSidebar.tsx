@@ -1,25 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export const PAGE_BOTTOM_ID = "page-bottom";
 
-const SECTIONS = [
-  { id: "overview", label: "Overview" },
-  { id: "core-concept", label: "Core Concept" },
-  { id: "problem-patterns", label: "Problem Patterns" },
-  { id: "signals", label: "When to Use" },
-  { id: "frontend-scenarios", label: "Frontend Scenarios" },
-  { id: "data-thinking", label: "Data Thinking" },
-  { id: "naive-approach", label: "Naive Approach" },
-  { id: "better-approach", label: "Better Approach" },
-  { id: "implementation", label: "Implementation" },
-  { id: "visualization", label: "Visualization" },
-  { id: "practice", label: "Practice" },
-  { id: "reflection", label: "Reflection" },
-];
-
 export default function TopicSidebar() {
+  const t = useTranslations("sidebar");
+
+  const SECTIONS = [
+    { id: "overview", label: t("overview") },
+    { id: "core-concept", label: t("coreConcept") },
+    { id: "problem-patterns", label: t("problemPatterns") },
+    { id: "signals", label: t("signals") },
+    { id: "frontend-scenarios", label: t("frontendScenarios") },
+    { id: "data-thinking", label: t("dataThinking") },
+    { id: "naive-approach", label: t("naiveApproach") },
+    { id: "better-approach", label: t("betterApproach") },
+    { id: "implementation", label: t("implementation") },
+    { id: "visualization", label: t("visualization") },
+    { id: "practice", label: t("practice") },
+    { id: "reflection", label: t("reflection") },
+  ];
+
   const [activeId, setActiveId] = useState("overview");
 
   // Scroll to top on mount (new topic page)
@@ -40,7 +43,6 @@ export default function TopicSidebar() {
             visible.delete(entry.target.id);
           }
         }
-        // Pick the first section in SECTIONS order that is visible
         const active = SECTIONS.find((s) => visible.has(s.id));
         if (active) setActiveId(active.id);
       },
@@ -53,6 +55,7 @@ export default function TopicSidebar() {
     }
 
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Activate the last section when the user reaches the bottom of the page
@@ -66,6 +69,7 @@ export default function TopicSidebar() {
     obs.observe(sentinel);
 
     return () => obs.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function scrollToSection(id: string) {
@@ -78,7 +82,7 @@ export default function TopicSidebar() {
   return (
     <nav className="hidden lg:block sticky top-20 w-52 shrink-0">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-        On this page
+        {t("onThisPage")}
       </p>
       <ul className="space-y-1">
         {SECTIONS.map((s) => (

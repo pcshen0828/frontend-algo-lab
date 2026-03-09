@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 interface Message {
   role: "user" | "assistant";
@@ -67,11 +68,12 @@ export default function TutorChat({
   topicSlug: string;
   topicTitle: string;
 }) {
+  const t = useTranslations("tutor");
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: `Hi! I can explain ${topicTitle} concepts, walk through examples, or help you spot when to apply it.`,
+      content: t("greeting", { topicTitle }),
     },
   ]);
   const [input, setInput] = useState("");
@@ -103,7 +105,7 @@ export default function TutorChat({
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, I had trouble responding. Please try again.",
+          content: t("errorMessage"),
         },
       ]);
     } finally {
@@ -123,7 +125,7 @@ export default function TutorChat({
           onClick={() => setIsOpen(true)}
           className="rounded-full px-4 py-2.5 bg-blue-600 text-white text-sm shadow-lg hover:bg-blue-700 cursor-pointer transition-colors"
         >
-          Ask AI Tutor
+          {t("openButton")}
         </button>
       </div>
     );
@@ -136,11 +138,11 @@ export default function TutorChat({
         <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between shrink-0">
           <div>
             <h3 className="font-semibold text-gray-900 text-sm">{topicTitle} — AI Tutor</h3>
-            <p className="text-xs text-gray-500">Ask me anything about this topic</p>
+            <p className="text-xs text-gray-500">{t("subheading")}</p>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            aria-label="Close AI Tutor"
+            aria-label={t("closeLabel")}
             className="text-gray-400 hover:text-gray-600 text-lg leading-none cursor-pointer transition-colors"
           >
             ×
@@ -166,7 +168,7 @@ export default function TutorChat({
           {loading && (
             <div className="flex justify-start">
               <div className="bg-gray-100 rounded-lg px-4 py-2.5 text-sm text-gray-500">
-                Thinking...
+                {t("thinking")}
               </div>
             </div>
           )}
@@ -194,7 +196,7 @@ export default function TutorChat({
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="e.g. When would I use this in a React app?"
+            placeholder={t("placeholder")}
             disabled={loading}
             className="flex-1 text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none disabled:opacity-60"
           />
@@ -203,7 +205,7 @@ export default function TutorChat({
             disabled={!input.trim() || loading}
             className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
-            Send
+            {t("sendButton")}
           </button>
         </form>
       </div>
