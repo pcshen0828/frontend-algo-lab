@@ -31,6 +31,10 @@ Be Socratic — guide with questions rather than immediately giving full answers
 }
 
 export async function POST(request: NextRequest) {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return new Response("Server misconfiguration: ANTHROPIC_API_KEY is not set", { status: 500 });
+  }
+
   const body = await request.json().catch(() => ({}));
   const { topicSlug, userMessage, messages } = body as {
     topicSlug: string;
@@ -64,8 +68,9 @@ export async function POST(request: NextRequest) {
               controller.enqueue(new TextEncoder().encode(chunk.delta.text));
             }
           }
-        } finally {
           controller.close();
+        } catch (err) {
+          controller.error(err);
         }
       },
     });
