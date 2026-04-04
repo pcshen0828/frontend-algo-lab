@@ -14,13 +14,15 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     <div className="max-w-4xl mx-auto px-4 py-16">
       {/* Hero */}
       <section className="text-center mb-20">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">{t("heroTitle")}</h1>
-        <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto mb-8">
+        <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+          {t("heroTitle")}
+        </h1>
+        <p className="sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto mb-8">
           {t("heroSubtitle")}
         </p>
         <Link
           href="/algorithms"
-          className="inline-block bg-blue-600 text-white text-lg font-medium px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-block bg-blue-600 text-white font-medium px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
         >
           {t("browseAlgorithms")}
         </Link>
