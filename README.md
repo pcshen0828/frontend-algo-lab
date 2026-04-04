@@ -261,6 +261,14 @@ Install dependencies:
 npm install
 ```
 
+Create a `.env.local` file and add your Anthropic API key:
+
+```
+ANTHROPIC_API_KEY=your_api_key_here
+```
+
+The AI tutor requires this key. Without it, the tutor chat will return an error. You can get an API key at [console.anthropic.com](https://console.anthropic.com).
+
 Run the development server:
 
 ```
