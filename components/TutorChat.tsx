@@ -8,6 +8,8 @@ interface Message {
   content: string;
 }
 
+const isStreamingPlaceholder = (msg: Message) => msg.role === "assistant" && msg.content === "";
+
 const STARTER_QUESTIONS: Record<string, string[]> = {
   "binary-search": [
     "What's the difference between exact search and boundary search?",
@@ -79,6 +81,7 @@ export default function TutorChat({
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const hasUserMessages = messages.some((m) => m.role === "user");
   const starterQuestions = STARTER_QUESTIONS[topicSlug] ?? [];
@@ -87,9 +90,17 @@ export default function TutorChat({
     if (isOpen) inputRef.current?.focus();
   }, [isOpen]);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   async function send(text: string) {
     if (!text || loading) return;
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: text },
+      { role: "assistant", content: "" },
+    ]);
     setInput("");
     setLoading(true);
     try {
@@ -102,17 +113,30 @@ export default function TutorChat({
           messages: [...messages, { role: "user", content: text }],
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Request failed");
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      if (!res.ok || !res.body) throw new Error("Request failed");
+      setLoading(false);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[updated.length - 1] = {
+            role: "assistant",
+            content: updated[updated.length - 1].content + chunk,
+          };
+          return updated;
+        });
+      }
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: t("errorMessage"),
-        },
-      ]);
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { role: "assistant", content: t("errorMessage") };
+        return updated;
+      });
     } finally {
       setLoading(false);
     }
@@ -156,20 +180,22 @@ export default function TutorChat({
 
         {/* Messages */}
         <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-            >
+          {messages
+            .filter((msg) => !isStreamingPlaceholder(msg))
+            .map((msg, i) => (
               <div
-                className={`max-w-[85%] rounded-lg px-4 py-2.5 text-sm leading-relaxed ${
-                  msg.role === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
-                }`}
+                key={i}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                {msg.content}
+                <div
+                  className={`max-w-[85%] rounded-lg px-4 py-2.5 text-sm leading-relaxed ${
+                    msg.role === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {msg.content}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           {loading && (
             <div className="flex justify-start">
               <div className="bg-gray-100 rounded-lg px-4 py-2.5 text-sm text-gray-500">
@@ -177,6 +203,7 @@ export default function TutorChat({
               </div>
             </div>
           )}
+          <div ref={bottomRef} />
         </div>
 
         {/* Starter question chips */}

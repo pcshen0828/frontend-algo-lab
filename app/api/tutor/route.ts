@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import Anthropic, { APIError } from "@anthropic-ai/sdk";
 import { loadTopicBySlug } from "@/lib/topic-loader";
 
@@ -31,45 +31,53 @@ Be Socratic — guide with questions rather than immediately giving full answers
 }
 
 export async function POST(request: NextRequest) {
+  const body = await request.json().catch(() => ({}));
+  const { topicSlug, userMessage, messages } = body as {
+    topicSlug: string;
+    userMessage: string;
+    messages?: Message[];
+  };
+
+  if (!userMessage?.trim()) {
+    return new Response("userMessage is required", { status: 400 });
+  }
+
+  const history: Message[] = (messages ?? []).slice(-10);
+  const lastMessage = history[history.length - 1];
+  if (!lastMessage || lastMessage.role !== "user" || lastMessage.content !== userMessage) {
+    history.push({ role: "user", content: userMessage });
+  }
+
   try {
-    const body = await request.json();
-    const { topicSlug, userMessage, messages } = body as {
-      topicSlug: string;
-      userMessage: string;
-      messages?: Message[];
-    };
-
-    if (!userMessage?.trim()) {
-      return NextResponse.json({ error: "userMessage is required" }, { status: 400 });
-    }
-
-    // Build history: use last 10 messages (5 turns) to cap token usage
-    const history: Message[] = (messages ?? []).slice(-10);
-
-    // Append the new user message if not already the last one
-    const lastMessage = history[history.length - 1];
-    if (!lastMessage || lastMessage.role !== "user" || lastMessage.content !== userMessage) {
-      history.push({ role: "user", content: userMessage });
-    }
-
-    const response = await client.messages.create({
+    const anthropicStream = client.messages.stream({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 500,
       system: buildSystemPrompt(topicSlug ?? ""),
       messages: history,
     });
 
-    const reply =
-      response.content[0]?.type === "text"
-        ? response.content[0].text
-        : "Sorry, I had trouble responding. Please try again.";
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of anthropicStream) {
+            if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
+              controller.enqueue(new TextEncoder().encode(chunk.delta.text));
+            }
+          }
+        } finally {
+          controller.close();
+        }
+      },
+    });
 
-    return NextResponse.json({ reply });
+    return new Response(readable, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
   } catch (err) {
     if (err instanceof APIError) {
-      console.error(err);
-      return NextResponse.json({ error: err.message }, { status: 502 });
+      console.error("[tutor] Anthropic API error:", err.status, err.message);
+      return new Response(err.message, { status: 502 });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return new Response("Internal server error", { status: 500 });
   }
 }
