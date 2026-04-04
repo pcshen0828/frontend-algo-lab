@@ -96,9 +96,14 @@ export default function TutorChat({
       const res = await fetch("/api/tutor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topicSlug, userMessage: text }),
+        body: JSON.stringify({
+          topicSlug,
+          userMessage: text,
+          messages: [...messages, { role: "user", content: text }],
+        }),
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Request failed");
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
     } catch {
       setMessages((prev) => [
