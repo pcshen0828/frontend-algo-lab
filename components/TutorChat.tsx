@@ -2,11 +2,52 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
+
+const markdownComponents: React.ComponentProps<typeof ReactMarkdown>["components"] = {
+  p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+  h1: ({ children }) => <h1 className="text-base font-bold mt-2 mb-1">{children}</h1>,
+  h2: ({ children }) => <h2 className="text-sm font-bold mt-2 mb-1">{children}</h2>,
+  h3: ({ children }) => <h3 className="text-sm font-semibold mt-1 mb-0.5">{children}</h3>,
+  code: ({ children, ...props }) => (
+    <code className="bg-gray-200 text-gray-900 rounded px-1 py-0.5 font-mono text-xs" {...props}>
+      {children}
+    </code>
+  ),
+  pre: ({ children }) => (
+    <pre className="bg-gray-200 rounded p-2.5 overflow-x-auto my-1.5 text-xs leading-relaxed font-mono">
+      {children}
+    </pre>
+  ),
+  ul: ({ children }) => <ul className="list-disc list-inside space-y-0.5 my-1 pl-1">{children}</ul>,
+  ol: ({ children }) => (
+    <ol className="list-decimal list-inside space-y-0.5 my-1 pl-1">{children}</ol>
+  ),
+  li: ({ children }) => <li className="text-sm">{children}</li>,
+  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+  em: ({ children }) => <em className="italic">{children}</em>,
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-gray-400 pl-3 my-1 text-gray-600 italic">
+      {children}
+    </blockquote>
+  ),
+  a: ({ href, children }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 underline hover:text-blue-800"
+    >
+      {children}
+    </a>
+  ),
+};
 
 const isStreamingPlaceholder = (msg: Message) => msg.role === "assistant" && msg.content === "";
 
@@ -192,7 +233,13 @@ export default function TutorChat({
                     msg.role === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800"
                   }`}
                 >
-                  {msg.content}
+                  {msg.role === "assistant" ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                      {msg.content}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </div>
             ))}
